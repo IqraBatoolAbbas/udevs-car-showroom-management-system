@@ -1,0 +1,17 @@
+.staff-dashboard {
+  padding: 24px;
+  background: linear-gradient(135deg, #F8F9FA 0%, #E3F2FD 100%);
+  min-height: 100vh;
+}
+
+.staff-dashboard .MuiPaper-root {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+  .staff-dashboard {
+    padding: 16px;
+  }
+}

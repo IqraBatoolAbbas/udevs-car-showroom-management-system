@@ -1,0 +1,113 @@
+.settings-page {
+  padding: 24px;
+  background: linear-gradient(135deg, #F8F9FA 0%, #E3F2FD 100%);
+  min-height: 100vh;
+}
+
+.settings-section {
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  overflow: hidden;
+  height: 100%;
+  transition: all 0.3s ease-in-out;
+  background: white;
+  margin-bottom: 24px;
+}
+
+.settings-section:hover {
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  transform: translateY(-4px);
+}
+
+.section-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  background: linear-gradient(135deg, #1565C0 0%, #00ACC1 100%);
+}
+
+.section-header h6 {
+  font-weight: 700;
+  color: white !important;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.1rem;
+}
+
+.settings-content {
+  padding: 24px;
+}
+
+.settings-section .MuiTextField-root {
+  margin-bottom: 16px;
+}
+
+.settings-section .MuiFormControlLabel-root {
+  margin-bottom: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+}
+
+.settings-section .MuiFormControlLabel-root:hover {
+  background-color: #F5F5F5;
+}
+
+.settings-section .MuiChip-root {
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .settings-page {
+    padding: 16px;
+  }
+
+  .section-header {
+    padding: 16px;
+  }
+
+  .section-header h6 {
+    font-size: 1rem;
+  }
+
+  .settings-content {
+    padding: 16px;
+  }
+
+  .settings-section .MuiTextField-root {
+    margin-bottom: 12px;
+  }
+}
+/* 1. Sidebar Container & Layout Fix */
+.sidebar, 
+.MuiDrawer-paper {
+  width: 260px !important; /* Proper fixed width */
+  background-color: #0F172A !important; /* Solid dark background */
+  padding: 16px 12px !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important; /* Prevents button overflowing outside sidebar */
+}
+
+/* 2. Active Nav Item Pill Fix */
+.nav-item.active,
+.sidebar-link.active {
+  width: 100% !important; /* Fit strictly inside sidebar width */
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  border-radius: 12px !important; /* Smooth rounded corners instead of overflowing pill */
+  margin: 4px 0 !important;
+  padding: 10px 16px !important;
+  background: linear-gradient(135deg, #0284C7 0%, #0D9488 100%) !important;
+  color: #FFFFFF !important;
+}
+
+/* 3. Text and Icon Alignment */
+.nav-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}

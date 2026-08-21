@@ -1,0 +1,7 @@
+.car-details-page {
+  padding: 0;
+}
+
+.car-details-page img {
+  user-select: none;
+}

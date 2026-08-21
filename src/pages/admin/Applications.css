@@ -1,0 +1,194 @@
+.applications-page {
+  padding: 24px;
+  background: linear-gradient(135deg, #F8F9FA 0%, #E3F2FD 100%);
+  min-height: 100vh;
+}
+
+.status-overview {
+  margin-bottom: 24px;
+}
+
+.status-card {
+  padding: 20px;
+  text-align: center;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  transition: all 0.3s ease-in-out;
+  background: white;
+}
+
+.status-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+.status-count {
+  font-weight: 800;
+  margin-bottom: 8px;
+  font-size: 2.5rem;
+  background: linear-gradient(135deg, #1565C0 0%, #00ACC1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.status-count.warning {
+  background: linear-gradient(135deg, #F59E0B 0%, #FFA726 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.status-count.info {
+  background: linear-gradient(135deg, #3B82F6 0%, #42A5F5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.status-count.secondary {
+  background: linear-gradient(135deg, #8B5CF6 0%, #AB47BC 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.status-count.success {
+  background: linear-gradient(135deg, #10B981 0%, #66BB6A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.status-count.error {
+  background: linear-gradient(135deg, #EF4444 0%, #EF5350 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.status-count.primary {
+  background: linear-gradient(135deg, #1565C0 0%, #1976D2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.status-label {
+  color: #6B7280;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.filter-section {
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  background: white;
+  transition: all 0.3s ease-in-out;
+}
+
+.filter-section:hover {
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.filter-control {
+  min-width: 200px;
+}
+
+.applications-table {
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  overflow: hidden;
+  background: white;
+  transition: all 0.3s ease-in-out;
+}
+
+.applications-table:hover {
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.dashboard-table {
+  width: 100%;
+}
+
+.dashboard-table thead {
+  background: linear-gradient(135deg, #1565C0 0%, #00ACC1 100%);
+}
+
+.dashboard-table th {
+  font-weight: 700;
+  color: white;
+  padding: 16px;
+  text-align: left;
+  border-bottom: 2px solid rgba(255,255,255,0.2);
+}
+
+.dashboard-table td {
+  padding: 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.dashboard-table tr:hover {
+  background-color: rgba(21, 101, 192, 0.05);
+}
+
+.empty-state {
+  padding: 48px 24px;
+}
+
+.dialog-content {
+  margin-top: 16px;
+}
+
+.dialog-alert {
+  margin-bottom: 16px;
+}
+
+.dialog-form-control {
+  margin-bottom: 16px;
+}
+
+.dialog-textfield {
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .applications-page {
+    padding: 16px;
+  }
+
+  .status-overview {
+    margin-bottom: 16px;
+  }
+
+  .status-card {
+    padding: 16px;
+  }
+
+  .status-count {
+    font-size: 2rem;
+  }
+
+  .filter-section {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .filter-control {
+    width: 100%;
+  }
+
+  .dashboard-table th,
+  .dashboard-table td {
+    padding: 12px;
+    font-size: 0.875rem;
+  }
+
+  .dashboard-table {
+    font-size: 0.875rem;
+  }
+}

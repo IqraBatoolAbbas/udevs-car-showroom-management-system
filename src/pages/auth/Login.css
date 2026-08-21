@@ -1,0 +1,1413 @@
+/* =========================================================
+   UDEVS CAR SHOWROOM MANAGEMENT SYSTEM
+   Premium Login Page
+   ========================================================= */
+
+
+/* =========================================================
+   MAIN PAGE
+   ========================================================= */
+
+.login-container {
+  min-height: 100vh;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 35px;
+
+  position: relative;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 10% 15%,
+      rgba(0, 119, 255, 0.18),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 90% 85%,
+      rgba(0, 210, 240, 0.14),
+      transparent 30%
+    ),
+    linear-gradient(
+      135deg,
+      #030811 0%,
+      #071321 48%,
+      #06101b 100%
+    );
+}
+
+
+/* =========================================================
+   BACKGROUND GRID
+   ========================================================= */
+
+.login-container::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background-image:
+    linear-gradient(
+      rgba(91, 214, 255, 0.045) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(91, 214, 255, 0.045) 1px,
+      transparent 1px
+    );
+
+  background-size: 60px 60px;
+
+  opacity: 0.55;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   BACKGROUND GLOW
+   ========================================================= */
+
+.login-container::after {
+  content: "";
+
+  position: absolute;
+
+  width: 520px;
+  height: 520px;
+
+  right: -220px;
+  top: -220px;
+
+  border-radius: 50%;
+
+  background: rgba(0, 191, 255, 0.12);
+
+  filter: blur(90px);
+
+  animation: backgroundGlow 9s ease-in-out infinite alternate;
+
+  pointer-events: none;
+}
+
+@keyframes backgroundGlow {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1.25);
+    opacity: 0.9;
+  }
+}
+
+
+/* =========================================================
+   MAIN CARD
+   ========================================================= */
+
+.login-paper {
+  width: min(1120px, 100%);
+
+  min-height: 680px;
+
+  padding: 0 !important;
+
+  display: flex;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: 30px !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  box-shadow:
+    0 40px 100px rgba(0, 0, 0, 0.48),
+    0 0 60px rgba(0, 160, 255, 0.08);
+
+  z-index: 10;
+
+  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+/* The welcome panel stays in one place for every role. This prevents
+   layout switching/overlap while the login form changes role. */
+
+.login-slider {
+  width: 50%;
+
+  min-height: 680px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 60px;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(3, 8, 17, 0.93),
+      rgba(0, 66, 115, 0.82)
+    ),
+    url("https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1400&q=90");
+
+  background-size: cover;
+
+  background-position: center;
+
+  transition:
+    order 0.7s ease,
+    transform 0.7s ease;
+}
+
+
+/* Admin/Sales */
+
+.login-slider {
+  order: 1;
+}
+
+.login-form-area {
+  order: 2;
+}
+
+
+/* =========================================================
+   SLIDER OVERLAY
+   ========================================================= */
+
+.login-slider::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(2, 8, 18, 0.94),
+      rgba(0, 75, 130, 0.58),
+      rgba(0, 190, 225, 0.16)
+    );
+
+  z-index: 0;
+}
+
+
+/* =========================================================
+   SLIDER GRID
+   ========================================================= */
+
+.login-slider::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background-image:
+    linear-gradient(
+      rgba(100, 225, 255, 0.07) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(100, 225, 255, 0.07) 1px,
+      transparent 1px
+    );
+
+  background-size: 45px 45px;
+
+  opacity: 0.55;
+
+  z-index: 1;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   SLIDER CONTENT
+   ========================================================= */
+
+.slider-content {
+  width: 100%;
+
+  max-width: 450px;
+
+  position: relative;
+
+  z-index: 5;
+}
+
+
+/* =========================================================
+   SLIDER BRAND
+   ========================================================= */
+
+.slider-brand {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  margin-bottom: 55px;
+}
+
+.slider-brand-icon {
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0077ff,
+      #00c6df
+    );
+
+  box-shadow:
+    0 10px 30px rgba(0, 174, 255, 0.3);
+
+  color: #ffffff;
+}
+
+.slider-brand-icon svg {
+  font-size: 29px;
+}
+
+.slider-brand-name {
+  display: block;
+
+  font-size: 1.25rem;
+
+  font-weight: 800;
+
+  letter-spacing: 4px;
+
+  color: #ffffff;
+}
+
+.slider-brand-subtitle {
+  display: block;
+
+  margin-top: 3px;
+
+  font-size: 0.58rem;
+
+  letter-spacing: 3px;
+
+  color: #6fe6ff;
+}
+
+
+/* =========================================================
+   SLIDER HEADING
+   ========================================================= */
+
+.slider-heading {
+  font-family:
+    "Space Grotesk",
+    "Inter",
+    sans-serif !important;
+
+  font-size: clamp(2.6rem, 4vw, 4rem) !important;
+
+  line-height: 1.02 !important;
+
+  font-weight: 800 !important;
+
+  letter-spacing: -1.5px;
+
+  margin-bottom: 25px !important;
+
+  color: #ffffff;
+}
+
+.slider-heading span {
+  background:
+    linear-gradient(
+      100deg,
+      #ffffff,
+      #62ddff
+    );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+}
+
+
+/* =========================================================
+   SLIDER DESCRIPTION
+   ========================================================= */
+
+.slider-description {
+  max-width: 410px;
+
+  color: rgba(255, 255, 255, 0.7) !important;
+
+  font-size: 0.92rem !important;
+
+  line-height: 1.8 !important;
+
+  margin-bottom: 32px !important;
+}
+
+
+/* =========================================================
+   SLIDER FEATURES
+   ========================================================= */
+
+.slider-features {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 16px;
+
+  margin-top: 30px;
+}
+
+.slider-feature {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 12px 15px;
+
+  border-radius: 13px;
+
+  background: rgba(255, 255, 255, 0.055);
+
+  border: 1px solid rgba(255, 255, 255, 0.07);
+
+  backdrop-filter: blur(10px);
+
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease;
+}
+
+.slider-feature:hover {
+  transform: translateX(5px);
+
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.feature-icon {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  color: #68e4ff;
+
+  background: rgba(0, 190, 230, 0.1);
+
+  border: 1px solid rgba(104, 228, 255, 0.15);
+}
+
+.feature-icon svg {
+  font-size: 19px;
+}
+
+.slider-feature strong {
+  display: block;
+
+  color: #ffffff;
+
+  font-size: 0.82rem;
+
+  font-weight: 700;
+}
+
+.slider-feature span {
+  display: block;
+
+  margin-top: 2px;
+
+  color: rgba(255, 255, 255, 0.52);
+
+  font-size: 0.68rem;
+}
+
+
+/* =========================================================
+   SLIDER DOTS
+   ========================================================= */
+
+.slider-dots {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-top: 35px;
+}
+
+.slider-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.28);
+
+  transition: all 0.3s ease;
+}
+
+.slider-dot.active {
+  width: 30px;
+
+  border-radius: 10px;
+
+  background: #60ddff;
+
+  box-shadow:
+    0 0 15px rgba(96, 221, 255, 0.65);
+}
+
+
+/* =========================================================
+   DECORATIVE CIRCLES
+   ========================================================= */
+
+.slider-circle {
+  position: absolute;
+
+  border-radius: 50%;
+
+  border: 1px solid rgba(96, 221, 255, 0.14);
+
+  pointer-events: none;
+}
+
+.circle-one {
+  width: 330px;
+  height: 330px;
+
+  right: -170px;
+  bottom: -150px;
+
+  box-shadow:
+    0 0 80px rgba(0, 190, 255, 0.08);
+}
+
+.circle-two {
+  width: 190px;
+  height: 190px;
+
+  left: -100px;
+  top: -90px;
+
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+
+/* =========================================================
+   FORM AREA
+   ========================================================= */
+
+.login-form-area {
+  width: 50%;
+
+  min-height: 680px;
+
+  padding: 50px 58px;
+
+  display: flex;
+
+  align-items: center;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #fbfdff 100%
+    );
+
+  transition:
+    order 0.7s ease,
+    transform 0.7s ease;
+}
+
+
+/* =========================================================
+   LOGIN HEADER
+   ========================================================= */
+
+.login-header {
+  text-align: center;
+
+  margin-bottom: 25px;
+}
+
+.login-avatar {
+  width: 62px !important;
+  height: 62px !important;
+
+  margin: 0 auto 17px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #071321,
+      #0077ff,
+      #00c6df
+    ) !important;
+
+  box-shadow:
+    0 12px 28px rgba(0, 119, 255, 0.22);
+
+  border: 4px solid #ffffff;
+
+  outline: 1px solid #dcebf3;
+}
+
+.login-avatar svg {
+  font-size: 29px;
+}
+
+.login-header h1 {
+  font-family:
+    "Space Grotesk",
+    "Inter",
+    sans-serif !important;
+
+  font-size: 2rem !important;
+
+  font-weight: 800 !important;
+
+  letter-spacing: -0.5px;
+
+  color: #071321;
+
+  margin-bottom: 5px !important;
+}
+
+.login-subtitle {
+  color: #718096 !important;
+
+  font-size: 0.82rem !important;
+}
+
+
+/* =========================================================
+   ROLE SECTION
+   ========================================================= */
+
+.role-section {
+  margin-bottom: 16px;
+}
+
+.role-label {
+  display: block;
+
+  margin-bottom: 8px !important;
+
+  color: #718096 !important;
+
+  font-size: 0.62rem !important;
+
+  font-weight: 800 !important;
+
+  letter-spacing: 1.5px;
+}
+
+
+/* =========================================================
+   ROLE SWITCHER
+   ========================================================= */
+
+.role-switcher {
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 6px;
+
+  padding: 5px;
+
+  border-radius: 14px;
+
+  background: #eef5f9;
+
+  border: 1px solid #e0ebf1;
+}
+
+.role-switcher button {
+  min-height: 58px;
+
+  padding: 6px 4px;
+
+  border: 0;
+
+  border-radius: 10px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 3px;
+
+  cursor: pointer;
+
+  color: #718096;
+
+  background: transparent;
+
+  transition:
+    color 0.3s ease,
+    background 0.3s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.role-switcher button:hover {
+  color: #0077ff;
+
+  background: #ffffff;
+
+  transform: translateY(-1px);
+}
+
+.role-switcher button.active {
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #071321,
+      #0077ff,
+      #00bcd4
+    );
+
+  box-shadow:
+    0 7px 18px rgba(0, 119, 255, 0.2);
+}
+
+.role-icon {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.role-icon svg {
+  font-size: 18px;
+}
+
+.role-name {
+  font-size: 0.55rem;
+
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   SELECTED ROLE INFO
+   ========================================================= */
+
+.selected-role-info {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 12px 14px;
+
+  margin-top: 15px;
+
+  border-radius: 13px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f3f9fc,
+      #eef7fb
+    );
+
+  border: 1px solid #dcecf3;
+}
+
+.selected-role-icon {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  color: #0077ff;
+
+  background: #ffffff;
+
+  border: 1px solid #d9eaf3;
+
+  box-shadow:
+    0 4px 12px rgba(0, 100, 160, 0.06);
+}
+
+.selected-role-icon svg {
+  font-size: 20px;
+}
+
+.selected-role-info strong {
+  display: block;
+
+  color: #102033;
+
+  font-size: 0.78rem;
+}
+
+.selected-role-info span {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #718096;
+
+  font-size: 0.64rem;
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   DIVIDER
+   ========================================================= */
+
+.login-divider {
+  margin: 20px 0 !important;
+
+  border-color: #e8eef2 !important;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.input-wrapper {
+  margin-bottom: 17px;
+}
+
+.input-wrapper .MuiOutlinedInput-root {
+  border-radius: 12px;
+
+  background: #f8fafc;
+
+  transition:
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.input-wrapper .MuiOutlinedInput-root:hover {
+  background: #ffffff;
+}
+
+.input-wrapper
+  .MuiOutlinedInput-root.Mui-focused {
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 4px rgba(0, 174, 234, 0.08);
+}
+
+.input-wrapper
+  .MuiOutlinedInput-notchedOutline {
+  border-color: #d9e4eb;
+}
+
+.input-wrapper
+  .MuiOutlinedInput-root:hover
+  .MuiOutlinedInput-notchedOutline {
+  border-color: #a9cfdf;
+}
+
+.input-wrapper
+  .MuiOutlinedInput-root.Mui-focused
+  .MuiOutlinedInput-notchedOutline {
+  border-color: #00aeea;
+
+  border-width: 2px;
+}
+
+.input-wrapper .MuiInputLabel-root {
+  color: #718096;
+}
+
+.input-wrapper
+  .MuiInputLabel-root.Mui-focused {
+  color: #0077ff;
+}
+
+.input-wrapper .MuiInputAdornment-root svg {
+  color: #8296a6;
+
+  font-size: 20px;
+}
+
+.input-wrapper
+  .MuiOutlinedInput-root.Mui-focused
+  .MuiInputAdornment-root
+  svg {
+  color: #0077ff;
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.login-alert {
+  margin-bottom: 17px;
+
+  border-radius: 11px !important;
+
+  font-size: 0.78rem !important;
+}
+
+
+/* =========================================================
+   LOGIN BUTTON
+   ========================================================= */
+
+.login-button {
+  min-height: 54px !important;
+
+  border-radius: 12px !important;
+
+  text-transform: none !important;
+
+  font-size: 0.95rem !important;
+
+  font-weight: 800 !important;
+
+  letter-spacing: 0.1px;
+
+  background:
+    linear-gradient(
+      100deg,
+      #071321 0%,
+      #006ee6 52%,
+      #00bcd4 100%
+    ) !important;
+
+  box-shadow:
+    0 12px 27px rgba(0, 119, 255, 0.22) !important;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease !important;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 17px 34px rgba(0, 174, 234, 0.3) !important;
+}
+
+.login-button:active {
+  transform: translateY(0);
+}
+
+
+/* =========================================================
+   DEMO SECTION
+   ========================================================= */
+
+.demo-section {
+  margin-top: 23px;
+
+  padding: 15px;
+
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f7fafc,
+      #eef7fb
+    );
+
+  border: 1px solid #e0edf3;
+}
+
+.demo-heading {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-bottom: 12px;
+}
+
+.demo-heading span {
+  flex: 1;
+
+  height: 1px;
+
+  background: #dce8ee;
+}
+
+.demo-heading p {
+  margin: 0 !important;
+
+  color: #82909c;
+
+  font-size: 0.57rem !important;
+
+  font-weight: 800;
+
+  letter-spacing: 1.3px;
+}
+
+
+/* =========================================================
+   DEMO BUTTONS
+   ========================================================= */
+
+.demo-button {
+  min-height: 37px !important;
+
+  border-radius: 9px !important;
+
+  border-color: #d5e4eb !important;
+
+  color: #506274 !important;
+
+  background: #ffffff !important;
+
+  text-transform: none !important;
+
+  font-size: 0.65rem !important;
+
+  font-weight: 700 !important;
+
+  transition:
+    all 0.25s ease !important;
+}
+
+.demo-button:hover {
+  color: #0077ff !important;
+
+  border-color: #80cbe4 !important;
+
+  background: #f4fbfe !important;
+
+  transform: translateY(-1px);
+}
+
+.demo-button.selected {
+  color: #ffffff !important;
+
+  border-color: transparent !important;
+
+  background:
+    linear-gradient(
+      100deg,
+      #071321,
+      #0077ff
+    ) !important;
+
+  box-shadow:
+    0 6px 15px rgba(0, 119, 255, 0.17);
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.login-footer {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-top: 18px;
+
+  color: #a0acb6;
+
+  font-size: 0.52rem;
+
+  letter-spacing: 0.6px;
+}
+
+.login-footer span:last-child {
+  text-align: right;
+}
+
+
+/* =========================================================
+   ANIMATION
+   ========================================================= */
+
+.login-paper {
+  animation: cardEntrance 0.8s ease-out;
+}
+
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(25px)
+      scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+.slider-content {
+  animation: sliderContent 0.9s ease-out 0.15s both;
+}
+
+@keyframes sliderContent {
+  from {
+    opacity: 0;
+
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+  .login-container {
+    padding: 22px;
+  }
+
+  .login-paper {
+    width: min(900px, 100%);
+  }
+
+  .login-slider {
+    padding: 45px;
+  }
+
+  .login-form-area {
+    padding: 42px 40px;
+  }
+
+  .slider-heading {
+    font-size: 2.6rem !important;
+  }
+
+  .slider-description {
+    font-size: 0.82rem !important;
+  }
+
+  .slider-features {
+    gap: 11px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE / SMALL TABLET
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+  .login-container {
+    padding: 15px;
+    align-items: center;
+  }
+
+  .login-paper {
+    min-height: auto;
+
+    display: flex;
+
+    flex-direction: column;
+
+    border-radius: 23px !important;
+  }
+
+
+  /*
+     On mobile the slider always comes first.
+     This avoids awkward left/right layouts.
+  */
+
+  .login-paper.slider-left .login-slider,
+  .login-paper.slider-right .login-slider {
+    order: 1;
+  }
+
+  .login-paper.slider-left .login-form-area,
+  .login-paper.slider-right .login-form-area {
+    order: 2;
+  }
+
+
+  .login-slider {
+    width: 100%;
+
+    min-height: 310px;
+
+    padding: 35px 30px;
+
+    background-position: center;
+  }
+
+  .login-form-area {
+    width: 100%;
+
+    min-height: auto;
+
+    padding: 38px 30px;
+  }
+
+  .slider-brand {
+    margin-bottom: 30px;
+  }
+
+  .slider-heading {
+    font-size: 2.3rem !important;
+
+    margin-bottom: 14px !important;
+  }
+
+  .slider-description {
+    font-size: 0.78rem !important;
+
+    line-height: 1.6 !important;
+
+    margin-bottom: 20px !important;
+  }
+
+  .slider-features {
+    display: none;
+  }
+
+  .slider-dots {
+    margin-top: 20px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 520px) {
+
+  .login-container {
+    padding: 8px;
+  }
+
+  .login-paper {
+    border-radius: 18px !important;
+  }
+
+  .login-slider {
+    min-height: 260px;
+
+    padding: 27px 22px;
+  }
+
+  .slider-brand {
+    margin-bottom: 25px;
+  }
+
+  .slider-brand-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .slider-brand-icon svg {
+    font-size: 23px;
+  }
+
+  .slider-brand-name {
+    font-size: 1rem;
+  }
+
+  .slider-brand-subtitle {
+    font-size: 0.5rem;
+  }
+
+  .slider-heading {
+    font-size: 2rem !important;
+
+    letter-spacing: -0.8px;
+  }
+
+  .slider-description {
+    font-size: 0.72rem !important;
+  }
+
+  .login-form-area {
+    padding: 30px 18px;
+  }
+
+  .login-avatar {
+    width: 54px !important;
+    height: 54px !important;
+  }
+
+  .login-header h1 {
+    font-size: 1.65rem !important;
+  }
+
+  .login-subtitle {
+    font-size: 0.74rem !important;
+  }
+
+  .role-switcher {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .role-switcher button {
+    min-height: 53px;
+  }
+
+  .role-name {
+    font-size: 0.58rem;
+  }
+
+  .selected-role-info {
+    padding: 10px;
+  }
+
+  .selected-role-info span {
+    font-size: 0.58rem;
+  }
+
+  .demo-section {
+    padding: 12px;
+  }
+
+  .login-footer {
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 5px;
+
+    text-align: center;
+  }
+
+  .login-footer span:last-child {
+    text-align: center;
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL DEVICES
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+  .login-container {
+    padding: 5px;
+  }
+
+  .login-slider {
+    min-height: 230px;
+
+    padding: 22px 17px;
+  }
+
+  .login-form-area {
+    padding: 25px 14px;
+  }
+
+  .slider-heading {
+    font-size: 1.75rem !important;
+  }
+
+  .role-switcher button {
+    min-height: 48px;
+  }
+
+  .selected-role-info {
+    display: none;
+  }
+
+  .login-button {
+    min-height: 50px !important;
+  }
+
+}

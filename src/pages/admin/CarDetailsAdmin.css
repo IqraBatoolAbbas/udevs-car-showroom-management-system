@@ -1,0 +1,30 @@
+.car-details-admin-page {
+  padding: 24px;
+  background: linear-gradient(135deg, #F8F9FA 0%, #E3F2FD 100%);
+  min-height: 100vh;
+}
+
+.details-card {
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  padding: 24px;
+  margin-bottom: 24px;
+  background: white;
+  transition: all 0.3s ease-in-out;
+}
+
+.details-card:hover {
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  transform: translateY(-4px);
+}
+
+@media (max-width: 768px) {
+  .car-details-admin-page {
+    padding: 16px;
+  }
+
+  .details-card {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+}
