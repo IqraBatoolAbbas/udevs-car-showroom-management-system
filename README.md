@@ -216,17 +216,17 @@ Password: Customer@123
 Access: Customer dashboard, showroom, profile, and personal applications.
 ```bash
 | Feature                 | Admin | Sales | Inventory | Customer |
-| ----------------------- | :---: | :---: | :-------: | :------: |
-| Dashboard               |   ✅   |   ✅   |     ✅     |     ✅    |
-| Cars Management         |   ✅   |   ❌   |     ✅     |     ❌    |
-| Suppliers Management    |   ✅   |   ❌   |     ✅     |     ❌    |
-| Customers Management    |   ✅   |   ✅   |     ❌     |     ❌    |
-| Applications Management |   ✅   |   ✅   |     ❌     | Own Only |
-| Users Management        |   ✅   |   ❌   |     ❌     |     ❌    |
-| Reports                 |   ✅   |   ❌   |     ✅     |     ❌    |
-| Settings                |   ✅   |   ❌   |     ❌     |     ❌    |
-| Showroom                |   ✅   |   ✅   |     ❌     |     ✅    |
-| Profile                 |   ✅   |   ✅   |     ✅     |     ✅    |
+|-------------------------|:-----:|:-----:|:---------:|:--------:|
+| Dashboard               |  ✅   |  ✅   |    ✅     |    ✅    |
+| Cars Management         |  ✅   |  ❌   |    ✅     |    ❌    |
+| Suppliers Management    |  ✅   |  ❌   |    ✅     |    ❌    |
+| Customers Management    |  ✅   |  ✅   |    ❌     |    ❌    |
+| Applications Management |  ✅   |  ✅   |    ❌     | Own Only |
+| Users Management        |  ✅   |  ❌   |    ❌     |    ❌    |
+| Reports                 |  ✅   |  ❌   |    ✅     |    ❌    |
+| Settings                |  ✅   |  ❌   |    ❌     |    ❌    |
+| Showroom                |  ✅   |  ✅   |    ❌     |    ✅    |
+| Profile                 |  ✅   |  ✅   |    ✅     |    ✅    |
 ```
 ### LocalStorage
 
