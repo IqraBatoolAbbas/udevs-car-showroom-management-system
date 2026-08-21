@@ -1,278 +1,479 @@
-# U Devs Car Showroom Management System
+# 🚗 UDEVS Car Showroom Management System
 
-IMPORTANT (Demo): This is a frontend-only prototype. All data (including seeded and created user passwords) are stored in LocalStorage in plaintext for demonstration purposes only. Do NOT use these credentials or this storage pattern in production. The README contains the seeded credentials for reviewer convenience.
+A professional frontend-only **Car Showroom Management System** developed using React.js as part of the **U Devs Internship Assignment**.
 
-A comprehensive React-based car showroom management and customer portal application. This system demonstrates professional frontend development with role-based access control, full CRUD operations, and LocalStorage persistence.
+The system provides separate interfaces and role-based access for **Admin, Sales, Inventory, and Customer** users. It includes car inventory management, supplier management, customer management, applications, dashboards, role-based access control, automatic calculations, and LocalStorage-based data persistence.
 
----
-
-Reviewer checklist (quick):
-1. Start the app: `npm install` then `npm run dev` and open the port shown (default http://localhost:5173).
-2. Login with seeded accounts (see "Dummy Login Credentials" below): Admin, Sales, Inventory, Customer.
-3. As Admin: create a car (Admin → Cars → Add New Car). Refresh page — car must persist.
-4. As Admin: create a supplier and link it to a car; try deleting a supplier with linked cars (should be blocked).
-5. As Customer: browse Showroom → Car Details → select an available color and Apply. Confirm application appears in My Applications and in Admin Applications.
-6. As Admin/Sales: open Applications → update status (Pending → Approved/Reserved/Completed/Rejected) and verify notification and activity log entries.
-7. Verify: profit and profit margin calculated automatically on car add/edit; search/filter/sort work across cars.
-8. Verify: customers see only their own applications (privacy enforced).
-
-Notes for repository submission:
-- Ensure `node_modules` and `dist` are not committed. If present, remove them from git history before publishing and confirm `.gitignore` is in place.
-- The app is intentionally offline/demo-only: no backend, no real authentication, no payment/email services.
+> **Important Demo Notice:**  
+> This is a frontend-only prototype. All application data, including seeded and created user passwords, is stored in browser LocalStorage in plaintext for demonstration purposes only. This authentication and storage approach must **not** be used in production.
 
 ---
 
+## 📌 Project Overview
+
+The UDEVS Car Showroom Management System is designed to demonstrate a complete frontend workflow for managing a car showroom.
+
+The application includes:
+
+- Role-based authentication and authorization
+- Admin dashboard
+- Sales dashboard
+- Inventory dashboard
+- Customer portal
+- Car inventory management
+- Supplier management
+- Customer management
+- Application management
+- Activity logging
+- Notifications
+- Search, filtering, and sorting
+- Automatic profit and profit margin calculations
+- LocalStorage data persistence
+- Responsive user interface
+
+The application does not require a backend, database, or external API.
+
+---
 
 ## 🚀 Features
 
-### For Admin/Staff:
-- **Dashboard**: Real-time KPIs showing inventory, applications, customers, and profit metrics
-- **Cars Management**: Full CRUD operations with search, filter, and sort capabilities
-- **Suppliers Management**: Complete supplier database with car linking
-- **Applications Management**: Track and update customer application statuses
-- **Activity Logging**: Audit trail of all system activities
-- **Role-Based Access**: Different dashboards for Admin, Sales, and Inventory roles
+### 👨‍💼 Admin
 
-### For Customers:
-- **Customer Portal**: Dedicated interface for browsing and applying for cars
-- **Showroom**: Advanced filtering by make, model, price, fuel type, and transmission
-- **Car Details**: Comprehensive vehicle information with image galleries
-- **Application System**: Easy car application process with status tracking
-- **My Applications**: Personal dashboard to track application progress
+- Admin dashboard with key business statistics
+- Manage users
+- Manage cars
+- Manage suppliers
+- Manage customers
+- Manage applications
+- View reports
+- Manage system settings
+- View activity logs
+- View notifications
+- Full system access
 
-## 🛠 Technology Stack
+### 💼 Sales
 
-- **Frontend**: React 19.2.8 with functional components and hooks
-- **UI Framework**: Material UI (MUI) for responsive design
-- **Routing**: React Router DOM for navigation
-- **Styling**: Custom CSS with MUI theming
-- **Data Persistence**: LocalStorage (no backend required)
-- **Build Tool**: Vite 8.2.2
-- **Language**: JavaScript/JSX
+- Sales dashboard
+- View showroom
+- Manage customers
+- Manage customer applications
+- Update application statuses
+- View customer-related information
 
-## 📋 Prerequisites
+### 📦 Inventory
 
-- Node.js (v18 or higher)
-- npm or yarn package manager
+- Inventory dashboard
+- Add and manage cars
+- Update car inventory
+- Manage suppliers
+- View inventory reports
+- Monitor stock availability
 
-## 🚀 Installation & Setup
+### 👤 Customer
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd "CAR SHOWROOM MANAGEMENT SYSTEM"
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Run the development server**
-   ```bash
-   npm run dev
-   ```
-
-4. **Open your browser**
-   Navigate to `http://localhost:5173` (or the port shown in terminal)
-
-## 📁 Project Structure
-
-```
-src/
-├── assets/              # Static assets (images, icons)
-├── components/          # Reusable UI components
-│   ├── common/         # Shared components (StatCard, PageHeader, etc.)
-│   ├── cars/           # Car-specific components
-│   ├── applications/   # Application components
-│   ├── customers/      # Customer components
-│   └── suppliers/      # Supplier components
-├── context/            # React context (AuthContext)
-├── data/               # Seed data for initial setup
-├── hooks/              # Custom React hooks
-├── layouts/            # Page layouts (AdminLayout, CustomerLayout)
-├── pages/              # Page components
-│   ├── admin/          # Admin pages
-│   ├── staff/          # Staff pages
-│   ├── customer/       # Customer pages
-│   └── auth/           # Authentication pages
-├── routes/             # Route configuration
-├── services/           # Business logic services
-├── theme/              # MUI theme configuration
-├── utils/              # Utility functions (validators, formatters)
-├── App.jsx             # Main application component
-└── main.jsx            # Application entry point
-```
-
-## 🔐 Dummy Login Credentials
-
-### Admin
-- **Email**: admin@udevs.com
-- **Password**: Admin@123
-- **Access**: Full system access including users, settings, and reports
-
-### Sales Manager
-- **Email**: sales@udevs.com
-- **Password**: Sales@123
-- **Access**: Dashboard, showroom, customers, and applications
-
-### Inventory Manager
-- **Email**: inventory@udevs.com
-- **Password**: Inventory@123
-- **Access**: Dashboard, cars, suppliers, and inventory reports
-
-### Customer
-- **Email**: customer@udevs.com
-- **Password**: Customer@123
-- **Access**: Customer portal, showroom, and personal applications
-
-## 🎯 Role Permissions
-
-| Feature | Admin | Sales | Inventory | Customer |
-|---------|-------|-------|-----------|-----------|
-| Dashboard | ✅ | ✅ | ✅ | ✅ |
-| Cars Management | ✅ | ❌ | ✅ | ❌ |
-| Suppliers Management | ✅ | ❌ | ✅ | ❌ |
-| Customers Management | ✅ | ✅ | ❌ | ❌ |
-| Applications Management | ✅ | ✅ | ❌ | Own only |
-| Users Management | ✅ | ❌ | ❌ | ❌ |
-| Reports | ✅ | ❌ | ✅ | ❌ |
-| Settings | ✅ | ❌ | ❌ | ❌ |
-| Showroom | ✅ | ✅ | ❌ | ✅ |
-| Profile | ✅ | ✅ | ✅ | ✅ |
-
-## 💾 LocalStorage Keys
-
-The application uses the following LocalStorage keys:
-
-- `udevs_users` - User accounts and role data
-- `udevs_session` - Current user session
-- `udevs_cars` - Car inventory
-- `udevs_suppliers` - Supplier records
-- `udevs_customers` - Customer information
-- `udevs_applications` - Car applications/orders
-- `udevs_notifications` - System notifications
-- `udevs_activity_logs` - Activity audit trail
-- `udevs_settings` - System settings
-
-## 🎨 UI/UX Features
-
-- **Responsive Design**: Works on desktop, tablet, and mobile devices
-- **Professional Theme**: Navy blue and cyan color scheme with clean typography
-- **Interactive Components**: 
-  - Confirmation dialogs for destructive actions
-  - Status chips for workflow states
-  - Color selectors for car options
-  - Search and filter controls
-- **Empty States**: User-friendly messages when no data is available
-- **Loading States**: Visual feedback during data operations
-- **Error Handling**: Comprehensive validation and error messages
-
-## ✅ Validation Rules
-
-### Car Management
-- Required fields: Make, Model, Variant, Year, Purchase Rate, Selling Price, Colors, Stock, Fuel, Transmission, Status, Supplier
-- Selling price must not be lower than purchase rate (with warning)
-- Stock must be non-negative integer
-- Year must be between 2000 and current year + 2
-
-### Supplier Management
-- Required fields: Company Name, Contact Person, Email, Phone, Address, City
-- Email format validation
-- Phone number format validation (Pakistani format)
-
-### Application Form
-- Required fields: Full Name, Email, CNIC, Cell Number, Address, City, Selected Car, Selected Color
-- Email format validation
-- CNIC format validation (XXXXX-XXXXXXX-X)
-- Phone number format validation (Pakistani format)
-
-## 🔄 Application Workflow
-
-1. **Admin/Inventory Setup**:
-   - Create supplier accounts
-   - Add cars to inventory with pricing and specifications
-   - Set stock levels and availability
-
-2. **Customer Journey**:
-   - Browse showroom with filters
-   - View detailed car information
-   - Select color and submit application
-   - Track application status in personal dashboard
-
-3. **Staff Processing**:
-   - Review applications in dashboard
-   - Update application status (Pending → Approved → Reserved → Completed)
-   - Manage inventory levels
-   - Generate reports
-
-## 📊 Key Features
-
-### Automatic Calculations
-- **Profit**: Selling Price - Purchase Rate
-- **Profit Margin**: (Profit ÷ Selling Price) × 100
-- **Stock Alerts**: Low stock warnings when quantity ≤ 3
-- **KPI Updates**: Real-time dashboard metrics
-
-### Data Management
-- **Search**: Full-text search across cars and suppliers
-- **Filter**: Multiple filter options (status, fuel type, price range, etc.)
-- **Sort**: Sort by price, year, stock, name
-- **Pagination**: Efficient data display for large datasets
-
-### Security Features
-- **Role-Based Access Control**: Users see only permitted modules
-- **Session Management**: Secure login/logout functionality
-- **Data Isolation**: Customers see only their own applications
-- **Activity Logging**: Audit trail of all system changes
-
-## 🧪 Testing Checklist
-
-- [x] Admin login and dashboard access
-- [x] Role-based navigation and permissions
-- [x] Car Create, Read, Update, Delete operations
-- [x] Supplier management with car linking
-- [x] Application status workflow
-- [x] Customer showroom browsing
-- [x] Application submission and tracking
-- [x] Search, filter, and sort functionality
-- [x] Responsive design on mobile devices
-- [x] Form validation and error handling
-- [x] LocalStorage data persistence
-- [x] Automatic profit calculations
-
-## ⚠️ Known Limitations
-
-1. **No Backend**: All data stored in LocalStorage (cleared when browser cache is cleared)
-2. **No Real Authentication**: Login is simulated with seeded users
-3. **No Payment Processing**: Applications are for demonstration only
-4. **No Email/SMS**: Notifications are simulated within the application
-5. **Single Device**: LocalStorage is device-specific
-6. **Image Storage**: Uses external URLs (no actual file upload)
-
-## 🚀 Future Improvements
-
-- Backend integration with Node.js/Express
-- Real database (MongoDB/PostgreSQL)
-- Real authentication with JWT
-- Payment gateway integration
-- Email/SMS notification system
-- File upload for car images
-- Advanced reporting with charts
-- Multi-language support
-- Dark/light mode toggle
-- Mobile app version
-
-## 📞 Support
-
-For issues or questions, please contact:
-- **Email**: info@udevs-showroom.com
-- **Project**: U Devs Internship Assignment
-
-## 📝 License
-
-This project is developed as part of the U Devs Internship Program.
+- Customer dashboard
+- Browse available cars
+- Search and filter cars
+- View detailed car information
+- Select available car colors
+- Submit car applications
+- Track application status
+- View personal applications
+- Manage profile
 
 ---
 
-**Note**: This is a frontend prototype for demonstration purposes. In a production environment, you would need to implement a proper backend with secure authentication and database integration.
+## 🛠 Technology Stack
+
+| Technology | Purpose |
+|------------|---------|
+| React 19.2.8 | Frontend framework |
+| JavaScript / JSX | Application development |
+| Material UI (MUI) | UI components |
+| React Router DOM | Application routing |
+| CSS | Custom styling |
+| LocalStorage | Client-side data persistence |
+| Vite 8.2.2 | Development and build tool |
+
+---
+
+## 📋 Prerequisites
+
+Before running the project, make sure you have:
+
+- Node.js v18 or higher
+- npm or yarn
+
+---
+
+## 🚀 Installation & Setup
+
+### 1. Clone the repository
+
+```bash
+git clone <repository-url>
+cd "CAR SHOWROOM MANAGEMENT SYSTEM"
+```
+2. Install dependencies
+```bash
+npm install
+```
+3. Start the development server
+```bash
+npm run dev
+```
+5. Open the application
+```bash
+Open the URL displayed in your terminal.
+Usually:
+http://localhost:5173
+```
+📸 Screenshots
+### Project Structure
+```bash
+src/
+├── components/
+│   ├── applications/
+│   ├── cars/
+│   └── common/
+│
+├── context/
+│   ├── AuthContext.jsx
+│   └── ThemeModeContext.jsx
+│
+├── data/
+│   ├── seedActivityLogs.js
+│   ├── seedApplications.js
+│   ├── seedCars.js
+│   ├── seedCustomers.js
+│   ├── seedData.js
+│   ├── seedNotifications.js
+│   ├── seedSuppliers.js
+│   └── seedUsers.js
+│
+├── layouts/
+│   ├── AdminLayout.jsx
+│   └── CustomerLayout.jsx
+│
+├── pages/
+│   ├── admin/
+│   ├── customer/
+│   ├── home/
+│   ├── staff/
+│   └── auth/
+│
+├── routes/
+│   ├── AppRoutes.jsx
+│   ├── ProtectedRoute.jsx
+│   └── RoleRoute.jsx
+│
+├── services/
+│   └── localStorageService.js
+│
+├── theme/
+│   └── theme.js
+│
+├── utils/
+│   ├── calculations.js
+│   ├── constants.js
+│   ├── formatters.js
+│   └── validators.js
+│
+├── App.jsx
+├── index.css
+└── main.jsx
+```
+Dummy Login Credentials
+
+The following seeded accounts are available for demonstration.
+### 👨‍💼 Admin
+```bash
+Email: admin@udevs.com
+Password: Admin@123
+```
+Access: Full system access including users, settings, reports, cars, suppliers, customers, and applications.
+
+##💼 Sales Manager
+```bash
+Email: sales@udevs.com
+Password: Sales@123
+```
+Access: Dashboard, showroom, customers, and applications.
+
+##📦 Inventory Manager
+```bash
+Email: inventory@udevs.com
+Password: Inventory@123
+```
+Access: Dashboard, cars, suppliers, and inventory reports.
+
+## 👤 Customer
+```bash
+Email: customer@udevs.com
+Password: Customer@123
+```
+### Role Permissions
+Access: Customer dashboard, showroom, profile, and personal applications.
+```bash
+| Feature                 | Admin | Sales | Inventory | Customer |
+| ----------------------- | :---: | :---: | :-------: | :------: |
+| Dashboard               |   ✅   |   ✅   |     ✅     |     ✅    |
+| Cars Management         |   ✅   |   ❌   |     ✅     |     ❌    |
+| Suppliers Management    |   ✅   |   ❌   |     ✅     |     ❌    |
+| Customers Management    |   ✅   |   ✅   |     ❌     |     ❌    |
+| Applications Management |   ✅   |   ✅   |     ❌     | Own Only |
+| Users Management        |   ✅   |   ❌   |     ❌     |     ❌    |
+| Reports                 |   ✅   |   ❌   |     ✅     |     ❌    |
+| Settings                |   ✅   |   ❌   |     ❌     |     ❌    |
+| Showroom                |   ✅   |   ✅   |     ❌     |     ✅    |
+| Profile                 |   ✅   |   ✅   |     ✅     |     ✅    |
+```
+### LocalStorage
+
+The application uses browser LocalStorage instead of a backend database.
+```bash
+udevs_users
+udevs_session
+udevs_cars
+udevs_suppliers
+udevs_customers
+udevs_applications
+udevs_notifications
+udevs_activity_logs
+udevs_settings
+```
+## Data Persistence
+
+All application data remains available after refreshing the page because it is stored in LocalStorage.
+
+However, LocalStorage is device and browser specific.
+## Automatic Calculations
+
+The system automatically calculates important showroom metrics.
+
+## Profit
+```bash
+Profit = Selling Price - Purchase Rate
+```
+## Profit Margin
+```bash
+Profit Margin = (Profit / Selling Price) × 100
+```
+## Alerts
+
+Cars with stock quantity less than or equal to 3 are treated as low-stock items.
+
+## Dashboard KPIs
+
+Dashboard statistics are updated based on the current LocalStorage data.
+
+### Search, Filter & Sort
+
+The application provides data management features including:
+
+- Full-text search
+- Make filtering
+- Model filtering
+- Fuel type filtering
+- Transmission filtering
+- Status filtering
+- Price filtering
+- Sorting by price
+- Sorting by year
+- Sorting by stock
+- Sorting by name
+## Validation
+- Car Validation
+- Make is required
+- Model is required
+- Variant is required
+- Year is required
+- Purchase rate is required
+- Selling price is required
+- Colors are required
+- Stock must be a non-negative integer
+- Fuel type is required
+- Transmission is required
+- Status is required
+- Supplier is required
+- Year must be between 2000 and current year + 2
+## Supplier Validation
+- Company name is required
+- Contact person is required
+- Email is required
+- Phone number is required
+- Address is required
+- City is required
+- Email format is validated
+- Pakistani phone number format is validated
+## ✅ Application Validation
+
+- Full name is required
+- Email is required
+- CNIC is required
+- Cell number is required
+- Address is required
+- City is required
+- Car selection is required
+- Color selection is required
+- Email format is validated
+- CNIC format is validated
+- Pakistani phone number format is validated
+
+---
+
+## 🔄 Application Workflow
+
+### 1. Inventory Setup
+
+Admin or Inventory Manager can:
+
+- Add suppliers
+- Add cars
+- Set purchase and selling prices
+- Configure stock
+- Set available colors
+- Manage inventory information
+
+### 2. Customer Journey
+
+Customers can:
+
+- Open the showroom
+- Search and filter cars
+- View car details
+- Select an available color
+- Submit an application
+- Track application status
+
+### 3. Staff Processing
+
+Admin or Sales users can:
+
+- Review applications
+- Update application status
+- Approve or reject applications
+- Reserve applications
+- Complete applications
+- Review notifications
+- Track activity logs
+
+---
+
+## 📝 Application Status Workflow
+
+Applications can move through the following statuses:
+
+```text
+Pending
+   ↓
+Approved
+   ↓
+Reserved
+   ↓
+Completed
+```
+An application can also be:
+
+- **Rejected**
+
+Status changes generate relevant notification and activity log entries.
+
+---
+
+## 🎨 UI/UX Features
+
+- Responsive design
+- Desktop, tablet, and mobile support
+- Professional showroom interface
+- Material UI components
+- Custom CSS styling
+- Role-specific navigation
+- Confirmation dialogs
+- Status chips
+- Search controls
+- Filter controls
+- Color selectors
+- Empty states
+- Loading states
+- Error states
+- Notifications
+- Activity logs
+
+---
+
+## 🧪 Testing Checklist
+
+- [x] Admin login
+- [x] Sales login
+- [x] Inventory login
+- [x] Customer login
+- [x] Role-based navigation
+- [x] Protected routes
+- [x] Car CRUD operations
+- [x] Supplier management
+- [x] Customer management
+- [x] Application management
+- [x] Application status workflow
+- [x] Customer showroom
+- [x] Car details
+- [x] Application submission
+- [x] Search functionality
+- [x] Filtering functionality
+- [x] Sorting functionality
+- [x] Form validation
+- [x] LocalStorage persistence
+- [x] Automatic profit calculation
+- [x] Responsive design
+- [x] Notifications
+- [x] Activity logging
+
+---
+
+## ⚠️ Known Limitations
+
+This project is intentionally designed as a frontend-only demonstration.
+
+- No backend server
+- No database
+- No real authentication
+- Passwords are stored in LocalStorage for demonstration
+- No payment processing
+- No real email or SMS service
+- LocalStorage is device/browser specific
+- External image URLs are used instead of file uploads
+- No production-level security
+
+---
+
+## 🚀 Future Improvements
+
+Possible future improvements include:
+
+- Node.js / Express backend
+- MongoDB or PostgreSQL database
+- JWT-based authentication
+- Secure password hashing
+- Payment gateway integration
+- Email and SMS notifications
+- Car image upload system
+- Advanced reporting and analytics
+- Multi-language support
+- Mobile application
+- Cloud database integration
+
+---
+
+## 📞 Project Information
+
+- **Project:** UDEVS Car Showroom Management System
+- **Program:** U Devs Internship Assignment
+- **Type:** Frontend Prototype
+- **Technology:** React.js
+- **Data Storage:** Browser LocalStorage
+
+---
+
+## 📄 License
+
+This project was developed as part of the **U Devs Internship Program** for educational and demonstration purposes.
