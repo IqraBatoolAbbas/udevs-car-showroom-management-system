@@ -57,7 +57,7 @@ const NotFound = () => (
 
 const AppRoutes = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <AuthProvider>
         <Routes>
           {/* Public Login Route */}

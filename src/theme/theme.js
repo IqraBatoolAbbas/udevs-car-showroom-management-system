@@ -116,10 +116,10 @@ const createAppTheme = (mode = 'light') => createTheme({
         root: {
           borderRadius: 16,
           boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
-          border: '1px solid rgba(0,0,0,0.06)',
+          border: mode === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.06)',
           transition: 'all 0.3s ease-in-out',
           '&:hover': {
-            boxShadow: '0 10px 28px rgba(0,0,0,0.08)',
+            boxShadow: mode === 'dark' ? '0 10px 28px rgba(0,0,0,0.3)' : '0 10px 28px rgba(0,0,0,0.08)',
           },
         },
       },
@@ -135,7 +135,8 @@ const createAppTheme = (mode = 'light') => createTheme({
       styleOverrides: {
         root: {
           padding: '16px 20px',
-          borderBottom: '1px solid rgba(0,0,0,0.05)',
+          borderBottom: mode === 'dark' ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.05)',
+          color: mode === 'dark' ? '#F8FAFC' : '#071321',
         },
         head: {
           backgroundColor: mode === 'dark' ? '#1a2d3d' : '#F3F4F6',
@@ -143,6 +144,37 @@ const createAppTheme = (mode = 'light') => createTheme({
           color: mode === 'dark' ? '#F8FAFC' : '#1F2937',
           fontSize: '0.88rem',
           letterSpacing: '0.2px',
+        },
+      },
+      MuiInputBase: {
+        styleOverrides: {
+          root: {
+            color: mode === 'dark' ? '#F8FAFC' : '#071321',
+          },
+          input: {
+            '&::placeholder': {
+              color: mode === 'dark' ? '#B8C4D0' : '#6B7280',
+              opacity: 1,
+            },
+          },
+        },
+      },
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            color: mode === 'dark' ? '#B8C4D0' : undefined,
+            '&.Mui-focused': {
+              color: mode === 'dark' ? '#5DDFE8' : undefined,
+            },
+          },
+        },
+      },
+      MuiDialog: {
+        styleOverrides: {
+          paper: {
+            backgroundColor: mode === 'dark' ? '#10263a' : '#ffffff',
+            color: mode === 'dark' ? '#F8FAFC' : '#071321',
+          },
         },
       },
     },
