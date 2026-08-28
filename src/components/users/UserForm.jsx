@@ -3,14 +3,14 @@ import { Box, Button, Grid, MenuItem, TextField } from '@mui/material';
 import { ROLES } from '../../utils/constants';
 import { validateUserForm } from '../../utils/validators';
 
-const emptyForm = { name: '', email: '', password: '', role: ROLES.SALES, status: 'active' };
+const emptyForm = { name: '', email: '', password: '', role: ROLES.SALES, status: 'active', cnic: '', joiningDate: '' };
 
 const UserForm = ({ user, users, loading, onSubmit, onCancel }) => {
   const [form, setForm] = useState(emptyForm);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    setForm(user ? { name: user.name || '', email: user.email || '', password: '', role: user.role || ROLES.SALES, status: user.status || 'active' } : emptyForm);
+    setForm(user ? { name: user.name || '', email: user.email || '', password: '', role: user.role || ROLES.SALES, status: user.status || 'active', cnic: user.cnic || '', joiningDate: user.joiningDate ? user.joiningDate.slice(0, 10) : '' } : emptyForm);
     setErrors({});
   }, [user]);
 
@@ -43,6 +43,12 @@ const UserForm = ({ user, users, loading, onSubmit, onCancel }) => {
         </Grid>
         <Grid item xs={12}>
           <TextField fullWidth label={user ? 'New password (optional)' : 'Password'} name="password" type="password" value={form.password} onChange={handleChange} error={!!errors.password} helperText={errors.password || (user ? 'Leave blank to keep the current password' : 'Use at least 8 characters')} required={!user} />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField fullWidth label="CNIC" name="cnic" value={form.cnic} onChange={handleChange} error={!!errors.cnic} helperText={errors.cnic || 'Format: 12345-1234567-1'} required={!user} />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField fullWidth label="Joining date" name="joiningDate" type="date" value={form.joiningDate} onChange={handleChange} error={!!errors.joiningDate} helperText={errors.joiningDate} InputLabelProps={{ shrink: true }} required={!user} />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField select fullWidth label="Role" name="role" value={form.role} onChange={handleChange} error={!!errors.role} helperText={errors.role} required>

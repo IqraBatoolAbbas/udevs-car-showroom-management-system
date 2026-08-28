@@ -139,7 +139,7 @@ To connect the module to the group backend, copy `.env.example` to `.env` and se
 VITE_API_URL=http://localhost:5000/api
 ```
 
-Expected endpoints are `GET /users`, `POST /users`, `PUT /users/:id`, and `DELETE /users/:id`.
+For the provided backend controller, the adapter uses `GET /user`, `POST /user`, `PUT /user` (with `id` in the JSON body), and `DELETE /user/:id`. It unwraps the backend's `{ data: { users } }` and `{ data: { newUser } }` response shapes and maps backend `userType` values to the existing showroom roles.
 
 ---
 
@@ -355,10 +355,10 @@ User endpoints:
 
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
-| GET | `/users` | Fetch users |
-| POST | `/users` | Create a user |
-| PUT | `/users/:id` | Update a user |
-| DELETE | `/users/:id` | Delete a user |
+| GET | `/user` | Fetch users |
+| POST | `/user` | Create a user |
+| PUT | `/user` | Update a user; send `id` in body |
+| DELETE | `/user/:id` | Delete a user |
 
 The User Control page dispatches Redux async actions for all CRUD operations and updates the table from reducer state without requiring a page refresh. It includes validation, duplicate-email handling, loading/error feedback, search, CSV export, confirmation before deletion, and protection against deleting the last administrator.bash
 udevs_users
