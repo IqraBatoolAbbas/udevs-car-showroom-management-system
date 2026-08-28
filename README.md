@@ -10,6 +10,96 @@ The system provides separate interfaces and role-based access for **Admin, Sales
 ---
 
 ## 📌 Project Overview
+<h3>📸 Project Screenshots (Click to View Full Size)</h3>
+
+<table>
+  <!-- Row 1 -->
+  <tr>
+    <td width="20%">
+      <a href="./public/images/pic1.png" target="_blank">
+        <img src="./public/images/pic1.png" alt="Screenshot 1" width="100%">
+      </a>
+    </td>
+    <td width="20%">
+      <a href="./public/images/pic2.png" target="_blank">
+        <img src="./public/images/pic2.png" alt="Screenshot 2" width="100%">
+      </a>
+    </td>
+    <td width="20%">
+      <a href="./public/images/pic3.png" target="_blank">
+        <img src="./public/images/pic3.png" alt="Screenshot 3" width="100%">
+      </a>
+    </td>
+    <td width="20%">
+      <a href="./public/images/pic4.png" target="_blank">
+        <img src="./public/images/pic4.png" alt="Screenshot 4" width="100%">
+      </a>
+    </td>
+    <td width="20%">
+      <a href="./public/images/pic5.png" target="_blank">
+        <img src="./public/images/pic5.png" alt="Screenshot 5" width="100%">
+      </a>
+    </td>
+  </tr>
+  <
+  <tr>
+    <td width="20%">
+      <a href="./public/images/pic6.png" target="_blank">
+        <img src="./public/images/pic6.png" alt="Screenshot 1" width="100%">
+      </a>
+    </td>
+    <td width="20%">
+      <a href="./public/images/pic7.png" target="_blank">
+        <img src="./public/images/pic7.png" alt="Screenshot 2" width="100%">
+      </a>
+    </td>
+    <td width="20%">
+      <a href="./public/images/pic8.png" target="_blank">
+        <img src="./public/images/pic8.png" alt="Screenshot 3" width="100%">
+      </a>
+    </td>
+    <td width="20%">
+      <a href="./public/images/pic9.png" target="_blank">
+        <img src="./public/images/pic9.png" alt="Screenshot 4" width="100%">
+      </a>
+    </td>
+    <td width="20%">
+      <a href="./public/images/pic10.png" target="_blank">
+        <img src="./public/images/pic10.png" alt="Screenshot 5" width="100%">
+      </a>
+    </td>
+  </tr>
+
+  <tr>
+    <td width="20%">
+      <a href="./public/images/pic11.png" target="_blank">
+        <img src="./public/images/pic11.png" alt="Screenshot 1" width="100%">
+      </a>
+    </td>
+    <td width="20%">
+      <a href="./public/images/pic12.png" target="_blank">
+        <img src="./public/images/pic12.png" alt="Screenshot 2" width="100%">
+      </a>
+    </td>
+    <td width="20%">
+      <a href="./public/images/pic13.png" target="_blank">
+        <img src="./public/images/pic13.png" alt="Screenshot 3" width="100%">
+      </a>
+    </td>
+    <td width="20%">
+      <a href="./public/images/pic14.png" target="_blank">
+        <img src="./public/images/pic14.png" alt="Screenshot 4" width="100%">
+      </a>
+    </td>
+    <td width="20%">
+      <a href="./public/images/pic 15.png" target="_blank">
+        <img src="./public/images/pic15.png" alt="Screenshot 5" width="100%">
+      </a>
+    </td>
+  </tr>
+
+
+</table>
 
 The UDEVS Car Showroom Management System is designed to demonstrate a complete frontend workflow for managing a car showroom.
 
@@ -31,7 +121,7 @@ The application includes:
 - LocalStorage data persistence
 - Responsive user interface
 
-The application does not require a backend, database, or external API.
+The core showroom demo remains runnable without a backend. The User Control module is API-ready and uses the configured backend when `VITE_API_URL` is available, with LocalStorage fallback for local demonstration.
 
 ---
 
@@ -108,8 +198,10 @@ Expected endpoints are `GET /users`, `POST /users`, `PUT /users/:id`, and `DELET
 | React 19.2.8 | Frontend framework |
 | JavaScript / JSX | Application development |
 | Material UI (MUI) | UI components |
+| Redux Toolkit + React Redux | User CRUD state management |
+| Axios | User API requests |
 | React Router DOM | Application routing |
-| CSS | Custom styling |
+| CSS | Responsive layouts and dark-mode styling |
 | LocalStorage | Client-side data persistence |
 | Vite 8.2.2 | Development and build tool |
 
@@ -248,8 +340,27 @@ Access: Customer dashboard, showroom, profile, and personal applications.
 ```
 ### LocalStorage
 
-The application uses browser LocalStorage instead of a backend database.
+The existing showroom modules use browser LocalStorage. The User Control module uses the configured REST API when `VITE_API_URL` is set and automatically falls back to LocalStorage when it is not configured.
+```
+
+### User API Configuration
+
+Copy `.env.example` to `.env` and set the backend base URL:
+
 ```bash
+VITE_API_URL=http://localhost:5000/api
+```
+
+User endpoints:
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/users` | Fetch users |
+| POST | `/users` | Create a user |
+| PUT | `/users/:id` | Update a user |
+| DELETE | `/users/:id` | Delete a user |
+
+The User Control page dispatches Redux async actions for all CRUD operations and updates the table from reducer state without requiring a page refresh. It includes validation, duplicate-email handling, loading/error feedback, search, CSV export, confirmation before deletion, and protection against deleting the last administrator.bash
 udevs_users
 udevs_session
 udevs_cars
@@ -403,6 +514,8 @@ Status changes generate relevant notification and activity log entries.
 
 - Responsive design
 - Desktop, tablet, and mobile support
+- Responsive user-management statistic cards
+- Dark-mode readable cards, tables, forms, and dialogs
 - Professional showroom interface
 - Material UI components
 - Custom CSS styling
