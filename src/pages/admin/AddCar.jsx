@@ -82,19 +82,16 @@ const AddCar = () => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  const { name, value } = e.target;
+  setFormData(prev => ({
+    ...prev,
+    [name]: name === 'stock' || name === 'year' ? (parseInt(value, 10) || 0) : value
+  }));
 
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
-  };
+  if (errors[name]) {
+    setErrors(prev => ({ ...prev, [name]: '' }));
+  }
+};
 
   const handleColorToggle = (color) => {
     setFormData(prev => {
@@ -138,11 +135,11 @@ const AddCar = () => {
     e.preventDefault();
     setErrors({});
 
-    const validationErrors = validateCarForm(formData);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+  const validationErrors = validateCarForm({
+  ...formData,
+  stock: parseInt(formData.stock, 10) || 0,
+  stockQuantity: parseInt(formData.stock, 10) || 0
+});
 
     setLoading(true);
 
@@ -152,16 +149,17 @@ const AddCar = () => {
       const margin = parseFloat(calculateProfitMargin(profit, parseFloat(formData.sellingPrice)));
 
       const carData = {
-        ...formData,
-        purchaseRate: parseFloat(formData.purchaseRate),
-        sellingPrice: parseFloat(formData.sellingPrice),
-        stock: parseInt(formData.stock),
-        year: parseInt(formData.year),
-        mileage: parseFloat(formData.mileage) || 0,
-        images: formData.images.filter(img => img.trim() !== ''),
-        profit,
-        profitMargin: margin
-      };
+  ...formData,
+  stock: parseInt(formData.stock, 10) || 0,
+  stockQuantity: parseInt(formData.stock, 10) || 0, // Validator and API key alignment
+  purchaseRate: parseFloat(formData.purchaseRate) || 0,
+  sellingPrice: parseFloat(formData.sellingPrice) || 0,
+  year: parseInt(formData.year, 10) || new Date().getFullYear(),
+  mileage: parseFloat(formData.mileage) || 0,
+  images: formData.images.filter(img => img.trim() !== ''),
+  profit,
+  profitMargin: margin
+};
 
       if (isEdit) {
         const index = cars.findIndex(c => c.id === id);

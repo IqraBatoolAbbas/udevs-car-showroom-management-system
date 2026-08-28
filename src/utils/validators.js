@@ -58,6 +58,12 @@ export const validateUserForm = (userData, users = [], editingId = null) => {
   if (userData.password && userData.password.length < 8) errors.password = 'Password must be at least 8 characters';
   if (!isRequired(userData.role)) errors.role = 'Role is required';
   if (!isRequired(userData.status)) errors.status = 'Status is required';
+  if (!editingId && !isRequired(userData.cnic)) {
+    errors.cnic = 'CNIC is required by the backend';
+  } else if (userData.cnic && !/^\d{5}-\d{7}-\d$|^\d{13}$/.test(userData.cnic)) {
+    errors.cnic = 'Use XXXXX-XXXXXXX-X or 13 digits';
+  }
+  if (!editingId && !isRequired(userData.joiningDate)) errors.joiningDate = 'Joining date is required';
   return errors;
 };
 
