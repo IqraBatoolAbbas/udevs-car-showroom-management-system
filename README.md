@@ -35,6 +35,24 @@ The application does not require a backend, database, or external API.
 
 ---
 
+## Redux User Management Module
+
+The admin User Control page uses a production-style Redux Toolkit flow:
+
+`Users page/components -> async thunk -> Axios user API service -> user reducer -> UI`
+
+It supports fetching, creating, updating, and safely deleting users, with validation for required fields, email format, duplicate email addresses, roles, statuses, loading states, API errors, empty results, and last-administrator protection. Existing LocalStorage data is used as a development fallback when `VITE_API_URL` is not configured, so the frontend remains runnable without a backend.
+
+To connect the module to the group backend, copy `.env.example` to `.env` and set:
+
+```bash
+VITE_API_URL=http://localhost:5000/api
+```
+
+Expected endpoints are `GET /users`, `POST /users`, `PUT /users/:id`, and `DELETE /users/:id`.
+
+---
+
 ## 🚀 Features
 
 ### 👨‍💼 Admin

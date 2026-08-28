@@ -1,6 +1,7 @@
 .users-page {
-  padding: 24px;
-  background: linear-gradient(135deg, #F8F9FA 0%, #E3F2FD 100%);
+  padding: clamp(16px, 3vw, 32px);
+  background: var(--bg-light);
+  color: var(--text-dark);
   min-height: 100vh;
 }
 
@@ -9,23 +10,26 @@
 }
 
 .stat-card {
-  transition: all 0.3s ease-in-out;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  background: white;
+  height: 100%;
+  min-height: 132px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .stat-card:hover {
-  transform: translateY(-12px);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.2);
+  transform: translateY(-4px);
 }
 
 .stat-card .MuiCardContent-root {
-  padding: 24px;
+  height: 100%;
+  padding: clamp(16px, 2.5vw, 24px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
 }
 
 .stat-card h4 {
-  font-size: 2.5rem;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 800;
   background: linear-gradient(135deg, #1565C0 0%, #00ACC1 100%);
   -webkit-background-clip: text;
@@ -34,15 +38,7 @@
 }
 
 .users-table {
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
   overflow: hidden;
-  transition: all 0.3s ease-in-out;
-  background: white;
-}
-
-.users-table:hover {
-  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
 }
 
 .dashboard-table {
@@ -71,12 +67,18 @@
 }
 
 @media (max-width: 768px) {
-  .users-page {
-    padding: 16px;
-  }
-
   .user-stats {
     margin-bottom: 24px;
+  }
+
+  [data-theme="dark"] .stat-card h4 {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+  }
+
+  [data-theme="dark"] .stat-card,
+  [data-theme="dark"] .users-table {
+    border-color: rgba(255, 255, 255, 0.1);
   }
 
   .stat-card .MuiCardContent-root {

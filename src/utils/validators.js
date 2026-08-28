@@ -44,6 +44,23 @@ export const isRequired = (value) => {
   return true;
 };
 
+export const validateUserForm = (userData, users = [], editingId = null) => {
+  const errors = {};
+  if (!isRequired(userData.name)) errors.name = 'Full name is required';
+  if (!isRequired(userData.email)) {
+    errors.email = 'Email is required';
+  } else if (!isValidEmail(userData.email)) {
+    errors.email = 'Enter a valid email address';
+  } else if (users.some((user) => user.id !== editingId && user.email?.toLowerCase() === userData.email.trim().toLowerCase())) {
+    errors.email = 'A user with this email already exists';
+  }
+  if (!editingId && !isRequired(userData.password)) errors.password = 'Password is required';
+  if (userData.password && userData.password.length < 8) errors.password = 'Password must be at least 8 characters';
+  if (!isRequired(userData.role)) errors.role = 'Role is required';
+  if (!isRequired(userData.status)) errors.status = 'Status is required';
+  return errors;
+};
+
 /**
  * Validate non-negative number
  * @param {number} value - Number to validate
