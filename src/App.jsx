@@ -1,26 +1,29 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import AppRoutes from './routes/AppRoutes';
 import createAppTheme from './theme/theme';
-import seedInitialData from './data/seedData';
-import { ThemeModeProvider, useThemeMode } from './context/ThemeModeContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { restoreSession, selectAuthLoading } from './redux/auth/authSlice';
+import { selectThemeMode } from './redux/theme/themeSlice';
 
 const AppContent = () => {
-  const { mode } = useThemeMode();
+  const mode = useSelector(selectThemeMode);
   const theme = useMemo(() => createAppTheme(mode), [mode]);
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', mode);
+  }, [mode]);
   return <ThemeProvider theme={theme}><CssBaseline /><AppRoutes /></ThemeProvider>;
 };
 
 function App() {
-  // Seed before route/authentication components read LocalStorage.
-  useState(() => {
-    seedInitialData();
-    return true;
-  });
+  const dispatch = useDispatch();
+  const loading = useSelector(selectAuthLoading);
 
-  return (
-    <ThemeModeProvider><AppContent /></ThemeModeProvider>
-  );
+  useEffect(() => {
+    dispatch(restoreSession());
+  }, [dispatch]);
+
+  return loading ? null : <AppContent />;
 }
 
 export default App;

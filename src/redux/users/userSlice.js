@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchUsers, createUser, updateUser, deleteUser } from './userActions';
+import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
 
 const initialState = {
-  users: [],
+  users: localStorageService.getData(STORAGE_KEYS.USERS, []),
   selectedUser: null,
   loading: false,
   error: null,
@@ -13,6 +14,7 @@ const userSlice = createSlice({
   name: 'users',
   initialState,
   reducers: {
+    hydrateUsers: (state, action) => { state.users = action.payload || []; },
     clearUserError: (state) => { state.error = null; },
     clearUserSuccess: (state) => { state.success = false; },
     setSelectedUser: (state, action) => { state.selectedUser = action.payload; },
@@ -81,6 +83,7 @@ const userSlice = createSlice({
 
 export const {
   clearUserError,
+  hydrateUsers,
   clearUserSuccess,
   setSelectedUser,
   clearSelectedUser

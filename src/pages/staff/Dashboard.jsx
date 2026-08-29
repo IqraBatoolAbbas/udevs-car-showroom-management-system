@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { 
   Grid, 
@@ -27,16 +28,23 @@ import {
 } from '@mui/icons-material';
 import StatCard from '../../components/common/StatCard';
 import PageHeader from '../../components/common/PageHeader';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
 import { calculateInventoryStats, calculateApplicationStats, calculateTotalProfit } from '../../utils/calculations';
 import { formatCurrency, formatRelativeTime, formatCarName } from '../../utils/formatters';
-import { useAuth } from '../../context/AuthContext';
+import { selectAuthUser } from '../../redux/auth/authSlice';
+import { selectCars } from '../../redux/cars/carsSlice';
+import { selectApplications } from '../../redux/applications/applicationsSlice';
+import { selectCustomers } from '../../redux/customers/customersSlice';
+import { selectSuppliers } from '../../redux/suppliers/suppliersSlice';
 import { ROLES } from '../../utils/constants';
 import './Dashboard.css';
 
 const StaffDashboard = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const user = useSelector(selectAuthUser);
+  const carsData = useSelector(selectCars);
+  const applicationsData = useSelector(selectApplications);
+  const customersData = useSelector(selectCustomers);
+  const suppliersData = useSelector(selectSuppliers);
   const isSales = user?.role === ROLES.SALES;
   const isInventory = user?.role === ROLES.INVENTORY;
 
@@ -53,13 +61,11 @@ const StaffDashboard = () => {
 
   useEffect(() => {
     loadDashboardData();
-  }, []);
+  }, [carsData, applicationsData, customersData, suppliersData]);
 
   const loadDashboardData = () => {
-    const carsData = localStorageService.getData(STORAGE_KEYS.CARS, []);
-    const applications = localStorageService.getData(STORAGE_KEYS.APPLICATIONS, []);
-    const customers = localStorageService.getData(STORAGE_KEYS.CUSTOMERS, []);
-    const suppliersData = localStorageService.getData(STORAGE_KEYS.SUPPLIERS, []);
+    const applications = applicationsData;
+    const customers = customersData;
 
     const inventoryStats = calculateInventoryStats(carsData);
     const applicationStats = calculateApplicationStats(applications);

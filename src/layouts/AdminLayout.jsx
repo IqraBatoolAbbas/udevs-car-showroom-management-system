@@ -38,11 +38,13 @@ import {
   DarkMode,
   LightMode
 } from '@mui/icons-material';
-import { useAuth } from '../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectAuthUser, logout } from '../redux/auth/authSlice';
 import { MENU_ITEMS, ROLES } from '../utils/constants';
-import localStorageService, { STORAGE_KEYS } from '../services/localStorageService';
 import NotificationDrawer from '../components/common/NotificationDrawer';
-import { useThemeMode } from '../context/ThemeModeContext';
+import { selectThemeMode, toggleTheme } from '../redux/theme/themeSlice';
+import { selectNotifications } from '../redux/notifications/notificationsSlice';
+import { selectApplications } from '../redux/applications/applicationsSlice';
 
 const DRAWER_WIDTH = 270;
 
@@ -68,15 +70,18 @@ const AdminLayout = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth();
-  const { mode, toggleThemeMode } = useThemeMode();
+  const dispatch = useDispatch();
+  const user = useSelector(selectAuthUser);
+  const mode = useSelector(selectThemeMode);
+  const notifications = useSelector(selectNotifications);
+  const applications = useSelector(selectApplications);
 
   useEffect(() => {
     loadBadgeCounts();
-  }, [location.pathname, notifOpen]);
+  }, [location.pathname, notifOpen, notifications, applications]);
 
   const loadBadgeCounts = () => {
-    const notifs = localStorageService.getData(STORAGE_KEYS.NOTIFICATIONS, []);
+    const notifs = notifications;
     const userRole = user?.role || 'admin';
     const unread = notifs.filter(n =>
       (!n.targetUserId || n.targetUserId === user?.id) &&
@@ -84,8 +89,7 @@ const AdminLayout = () => {
     ).length;
     setUnreadCount(unread);
 
-    const apps = localStorageService.getData(STORAGE_KEYS.APPLICATIONS, []);
-    const pending = apps.filter(a => a.status === 'pending').length;
+    const pending = applications.filter(a => a.status === 'pending').length;
     setPendingAppsCount(pending);
   };
 
@@ -103,7 +107,7 @@ const AdminLayout = () => {
 
   const handleLogout = () => {
     handleProfileMenuClose();
-    logout();
+    dispatch(logout());
   };
 
   const menuItems = MENU_ITEMS[user?.role] || [];
@@ -293,7 +297,7 @@ const AdminLayout = () => {
           
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Tooltip title={mode === 'light' ? 'Enable dark mode' : 'Enable light mode'}>
-              <IconButton onClick={toggleThemeMode} sx={{ color: '#4B5563' }}>
+              <IconButton onClick={() => dispatch(toggleTheme())} sx={{ color: '#4B5563' }}>
                 {mode === 'light' ? <DarkMode /> : <LightMode />}
               </IconButton>
             </Tooltip>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -34,17 +35,20 @@ import PageHeader from '../../components/common/PageHeader';
 import StatusChip from '../../components/common/StatusChip';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 import EmptyState from '../../components/common/EmptyState';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
 import { formatCurrency, formatCarName } from '../../utils/formatters';
 import { CAR_STATUS, FUEL_TYPES, TRANSMISSION_TYPES, CAR_COLORS, ROLES } from '../../utils/constants';
-import { useAuth } from '../../context/AuthContext';
+import { selectAuthUser } from '../../redux/auth/authSlice';
+import { selectCars, removeCar } from '../../redux/cars/carsSlice';
+import { selectSuppliers } from '../../redux/suppliers/suppliersSlice';
+import localStorageService from '../../services/localStorageService';
 
 const Cars = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const [cars, setCars] = useState([]);
+  const dispatch = useDispatch();
+  const user = useSelector(selectAuthUser);
+  const cars = useSelector(selectCars);
+  const suppliers = useSelector(selectSuppliers);
   const [filteredCars, setFilteredCars] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [fuelFilter, setFuelFilter] = useState('');
@@ -54,19 +58,8 @@ const Cars = () => {
   const [deleteDialog, setDeleteDialog] = useState({ open: false, car: null });
 
   useEffect(() => {
-    loadData();
-  }, []);
-
-  useEffect(() => {
     applyFilters();
   }, [cars, searchTerm, statusFilter, fuelFilter, supplierFilter, colorFilter, sortBy]);
-
-  const loadData = () => {
-    const carsData = localStorageService.getData(STORAGE_KEYS.CARS, []);
-    const suppliersData = localStorageService.getData(STORAGE_KEYS.SUPPLIERS, []);
-    setCars(carsData);
-    setSuppliers(suppliersData);
-  };
 
   const applyFilters = () => {
     let filtered = [...cars];
@@ -155,15 +148,13 @@ const Cars = () => {
 
   const handleDeleteConfirm = () => {
     if (deleteDialog.car) {
-      const updatedCars = cars.filter(car => car.id !== deleteDialog.car.id);
-      localStorageService.setData(STORAGE_KEYS.CARS, updatedCars);
+      dispatch(removeCar(deleteDialog.car.id));
       localStorageService.logActivity({
         type: 'delete',
         entity: 'car',
         entityId: deleteDialog.car.id,
         description: `Deleted vehicle ${formatCarName(deleteDialog.car)} (${deleteDialog.car.id})`
       });
-      setCars(updatedCars);
       setDeleteDialog({ open: false, car: null });
     }
   };

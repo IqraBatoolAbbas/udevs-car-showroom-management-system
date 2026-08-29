@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
@@ -35,20 +36,22 @@ import PageHeader from '../../components/common/PageHeader';
 import CarCard from '../../components/cars/CarCard';
 import CarCompareModal from '../../components/cars/CarCompareModal';
 import EmptyState from '../../components/common/EmptyState';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
 import { FUEL_TYPES, TRANSMISSION_TYPES, CAR_COLORS, SORT_OPTIONS } from '../../utils/constants';
 import { formatCurrency, formatCarName } from '../../utils/formatters';
 import './Showroom.css';
+import { selectCars, selectWishlist, toggleWishlist } from '../../redux/cars/carsSlice';
 
 const Showroom = () => {
   const navigate = useNavigate();
-  const [cars, setCars] = useState([]);
+  const dispatch = useDispatch();
+  const allCars = useSelector(selectCars);
+  const wishlist = useSelector(selectWishlist);
+  const cars = allCars.filter(car => car?.status === 'available' && (car?.stock ?? 0) > 0);
   const [filteredCars, setFilteredCars] = useState([]);
-  const [favorites, setFavorites] = useState([]);
   const [compareList, setCompareList] = useState([]);
   const [compareModalOpen, setCompareModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
-  const [loading, setLoading] = useState(true);
+  const loading = false;
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
   // Filter States
@@ -61,21 +64,10 @@ const Showroom = () => {
   const [sortBy, setSortBy] = useState('price_asc');
 
   useEffect(() => {
-    loadShowroomData();
-  }, []);
-
-  useEffect(() => {
     applyFilters();
   }, [cars, searchTerm, makeFilter, fuelFilter, transmissionFilter, colorFilter, priceRange, sortBy, showOnlyFavorites, favorites]);
 
-  const loadShowroomData = () => {
-    const carsData = localStorageService.getData(STORAGE_KEYS.CARS, []);
-    const availableCars = Array.isArray(carsData) ? carsData.filter(car => car?.status === 'available' && (car?.stock ?? 0) > 0) : [];
-    const savedFavs = localStorageService.getData(STORAGE_KEYS.WISHLIST, []);
-    setCars(availableCars);
-    setFavorites(savedFavs);
-    setLoading(false);
-  };
+  const favorites = wishlist;
 
   const uniqueMakes = [...new Set(cars.map(c => c.make))].filter(Boolean);
 
@@ -145,15 +137,7 @@ const Showroom = () => {
   };
 
   const handleToggleFavorite = (car) => {
-    const isFav = favorites.includes(car.id);
-    let updated;
-    if (isFav) {
-      updated = favorites.filter(id => id !== car.id);
-    } else {
-      updated = [...favorites, car.id];
-    }
-    setFavorites(updated);
-    localStorageService.setData(STORAGE_KEYS.WISHLIST, updated);
+    dispatch(toggleWishlist(car.id));
   };
 
   const handleToggleCompare = (car) => {

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Box,
   Paper,
@@ -16,13 +17,21 @@ import {
 } from '@mui/material';
 import { Person, Security, Save, Assignment, CheckCircle } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
-import { useAuth } from '../../context/AuthContext';
+import localStorageService from '../../services/localStorageService';
+import { selectAuthUser, updateCurrentUser } from '../../redux/auth/authSlice';
+import { selectUsers } from '../../redux/users/userSelectors';
+import { updateUser } from '../../redux/users/userActions';
+import { selectApplications } from '../../redux/applications/applicationsSlice';
+import { selectCustomers, addCustomer, updateCustomer } from '../../redux/customers/customersSlice';
 import { PAKISTAN_CITIES } from '../../utils/constants';
 import './Profile.css';
 
 const Profile = () => {
-  const { user } = useAuth();
+  const dispatch = useDispatch();
+  const user = useSelector(selectAuthUser);
+  const users = useSelector(selectUsers);
+  const applications = useSelector(selectApplications);
+  const customers = useSelector(selectCustomers);
   const [profileData, setProfileData] = useState({
     name: '',
     email: '',
@@ -42,12 +51,11 @@ const Profile = () => {
 
   useEffect(() => {
     loadUserData();
-  }, [user]);
+  }, [user, users, applications]);
 
   const loadUserData = () => {
     if (user) {
       // Load full user data from localStorage since session only has basic info
-      const users = localStorageService.getData(STORAGE_KEYS.USERS, []);
       const fullUser = users.find(u => u.id === user.id || u.email === user.email);
       
       const userData = fullUser || user;
@@ -61,26 +69,15 @@ const Profile = () => {
         city: userData.city || 'Lahore'
       });
 
-      const apps = localStorageService.getData(STORAGE_KEYS.APPLICATIONS, []);
-      const userApps = apps.filter(a => a.email === user.email);
+      const userApps = applications.filter(a => a.email === user.email);
       setApplicationsCount(userApps.length);
     }
   };
 
   const handleProfileSave = (e) => {
     e.preventDefault();
-    const users = localStorageService.getData(STORAGE_KEYS.USERS, []);
-    const updatedUsers = users.map(u => {
-      if (u.id === user.id || u.email === user.email) {
-        return { ...u, ...profileData };
-      }
-      return u;
-    });
-
-    localStorageService.setData(STORAGE_KEYS.USERS, updatedUsers);
-    localStorageService.setData(STORAGE_KEYS.SESSION, { ...user, ...profileData });
-
-    const customers = localStorageService.getData(STORAGE_KEYS.CUSTOMERS, []);
+    dispatch(updateUser({ id: user.id, payload: profileData }));
+    dispatch(updateCurrentUser(profileData));
     const customerIndex = customers.findIndex(customer => customer.userId === user.id || customer.email?.toLowerCase() === user.email?.toLowerCase());
     const customerData = {
       userId: user.id,
@@ -93,9 +90,8 @@ const Profile = () => {
       status: 'active',
       updatedAt: new Date().toISOString()
     };
-    if (customerIndex >= 0) customers[customerIndex] = { ...customers[customerIndex], ...customerData };
-    else customers.push({ id: localStorageService.generateId('CUST'), ...customerData, createdAt: new Date().toISOString() });
-    localStorageService.setData(STORAGE_KEYS.CUSTOMERS, customers);
+    if (customerIndex >= 0) dispatch(updateCustomer({ ...customerData, id: customers[customerIndex].id }));
+    else dispatch(addCustomer({ id: localStorageService.generateId('CUST'), ...customerData, createdAt: new Date().toISOString() }));
 
     setSuccessMessage('Profile information updated successfully in LocalStorage.');
     setTimeout(() => setSuccessMessage(''), 3500);
@@ -115,7 +111,6 @@ const Profile = () => {
       return;
     }
 
-    const users = localStorageService.getData(STORAGE_KEYS.USERS, []);
     const userIndex = users.findIndex(u => u.id === user.id || u.email === user.email);
     if (userIndex !== -1) {
       if (users[userIndex].password !== passwordData.currentPassword) {
@@ -123,8 +118,7 @@ const Profile = () => {
         return;
       }
 
-      users[userIndex].password = passwordData.newPassword;
-      localStorageService.setData(STORAGE_KEYS.USERS, users);
+      dispatch(updateUser({ id: user.id, payload: { password: passwordData.newPassword } }));
       setSuccessMessage('Password changed successfully.');
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
       setTimeout(() => setSuccessMessage(''), 3500);

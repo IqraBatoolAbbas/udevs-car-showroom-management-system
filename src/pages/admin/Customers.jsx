@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Paper,
   Table,
@@ -26,14 +27,17 @@ import {
 } from '@mui/material';
 import { PersonAdd, Email, Phone, LocationOn, Close, Download, Search, Assignment, Person } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
+import localStorageService from '../../services/localStorageService';
+import { selectCustomers, addCustomer } from '../../redux/customers/customersSlice';
+import { selectApplications } from '../../redux/applications/applicationsSlice';
 import { validateCustomerForm } from '../../utils/validators';
 import { PAKISTAN_CITIES } from '../../utils/constants';
 import './Customers.css';
 
 const Customers = () => {
-  const [customers, setCustomers] = useState([]);
-  const [applications, setApplications] = useState([]);
+  const dispatch = useDispatch();
+  const customers = useSelector(selectCustomers);
+  const applications = useSelector(selectApplications);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
@@ -48,17 +52,6 @@ const Customers = () => {
     status: 'active'
   });
   const [errors, setErrors] = useState({});
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = () => {
-    const customersData = localStorageService.getData(STORAGE_KEYS.CUSTOMERS, []);
-    const appsData = localStorageService.getData(STORAGE_KEYS.APPLICATIONS, []);
-    setCustomers(Array.isArray(customersData) ? customersData : []);
-    setApplications(Array.isArray(appsData) ? appsData : []);
-  };
 
   const filteredCustomers = (customers || []).filter(customer => {
     if (!customer) return false;
@@ -100,8 +93,7 @@ const Customers = () => {
       createdAt: new Date().toISOString()
     };
 
-    const updated = [...customers, newCustomer];
-    localStorageService.setData(STORAGE_KEYS.CUSTOMERS, updated);
+    dispatch(addCustomer(newCustomer));
     localStorageService.logActivity({
       type: 'create',
       entity: 'customer',
@@ -109,7 +101,6 @@ const Customers = () => {
       description: `Registered new customer: ${newCustomer.name} (${newCustomer.id})`
     });
 
-    setCustomers(updated);
     setAddDialogOpen(false);
     setFormData({
       name: '',

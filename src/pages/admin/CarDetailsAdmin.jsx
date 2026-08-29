@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -28,33 +29,23 @@ import {
 } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
 import StatusChip from '../../components/common/StatusChip';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
 import { formatCurrency, formatCarName } from '../../utils/formatters';
-import { useAuth } from '../../context/AuthContext';
+import { selectAuthUser } from '../../redux/auth/authSlice';
+import { selectCars } from '../../redux/cars/carsSlice';
 import { ROLES } from '../../utils/constants';
 import './CarDetailsAdmin.css';
 
 const CarDetailsAdmin = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const user = useSelector(selectAuthUser);
 
-  const [car, setCar] = useState(null);
+  const cars = useSelector(selectCars);
+  const car = cars.find(c => c.id === id);
   const [selectedImage, setSelectedImage] = useState('');
   const canEditVehicle = user?.role === ROLES.ADMIN || user?.role === ROLES.INVENTORY;
 
-  useEffect(() => {
-    loadCar();
-  }, [id]);
-
-  const loadCar = () => {
-    const cars = localStorageService.getData(STORAGE_KEYS.CARS, []);
-    const foundCar = cars.find(c => c.id === id);
-    if (foundCar) {
-      setCar(foundCar);
-      setSelectedImage(foundCar.images?.[0] || '');
-    }
-  };
+  useEffect(() => setSelectedImage(car?.images?.[0] || ''), [car]);
 
   if (!car) {
     return (

@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -34,30 +35,22 @@ import PageHeader from '../../components/common/PageHeader';
 import StatusChip from '../../components/common/StatusChip';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 import EmptyState from '../../components/common/EmptyState';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
 import { maskSensitive } from '../../utils/formatters';
-import { useAuth } from '../../context/AuthContext';
+import { selectAuthUser } from '../../redux/auth/authSlice';
+import { selectSuppliers, removeSupplier } from '../../redux/suppliers/suppliersSlice';
+import { selectCars } from '../../redux/cars/carsSlice';
+import localStorageService from '../../services/localStorageService';
 import { ROLES } from '../../utils/constants';
 
 const Suppliers = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const [suppliers, setSuppliers] = useState([]);
-  const [cars, setCars] = useState([]);
+  const dispatch = useDispatch();
+  const user = useSelector(selectAuthUser);
+  const suppliers = useSelector(selectSuppliers);
+  const cars = useSelector(selectCars);
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteDialog, setDeleteDialog] = useState({ open: false, supplier: null });
   const [errorMessage, setErrorMessage] = useState('');
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = () => {
-    const suppliersData = localStorageService.getData(STORAGE_KEYS.SUPPLIERS, []);
-    const carsData = localStorageService.getData(STORAGE_KEYS.CARS, []);
-    setSuppliers(suppliersData);
-    setCars(carsData);
-  };
 
   const filteredSuppliers = suppliers.filter(supplier => {
     if (!searchTerm) return true;
@@ -93,15 +86,13 @@ const Suppliers = () => {
 
   const handleDeleteConfirm = () => {
     if (deleteDialog.supplier) {
-      const updatedSuppliers = suppliers.filter(s => s.id !== deleteDialog.supplier.id);
-      localStorageService.setData(STORAGE_KEYS.SUPPLIERS, updatedSuppliers);
+      dispatch(removeSupplier(deleteDialog.supplier.id));
       localStorageService.logActivity({
         type: 'delete',
         entity: 'supplier',
         entityId: deleteDialog.supplier.id,
         description: `Deleted supplier record: ${deleteDialog.supplier.companyName} (${deleteDialog.supplier.id})`
       });
-      setSuppliers(updatedSuppliers);
       setDeleteDialog({ open: false, supplier: null });
     }
   };

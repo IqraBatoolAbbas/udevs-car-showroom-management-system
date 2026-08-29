@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Paper,
   Grid,
@@ -29,6 +30,10 @@ import PageHeader from '../../components/common/PageHeader';
 import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
 import seedInitialData from '../../data/seedData';
 import './Settings.css';
+import { selectSettings, updateSettings } from '../../redux/settings/settingsSlice';
+import { selectCars } from '../../redux/cars/carsSlice';
+import { selectApplications } from '../../redux/applications/applicationsSlice';
+import { selectNotifications } from '../../redux/notifications/notificationsSlice';
 
 const defaultSettings = {
   showroomName: 'U Devs Car Showroom',
@@ -43,26 +48,18 @@ const defaultSettings = {
 };
 
 const Settings = () => {
-  const [settings, setSettings] = useState(defaultSettings);
+  const dispatch = useDispatch();
+  const savedSettings = useSelector(selectSettings);
+  const cars = useSelector(selectCars);
+  const applications = useSelector(selectApplications);
+  const notifications = useSelector(selectNotifications);
+  const [settings, setSettings] = useState({ ...defaultSettings, ...savedSettings });
   const [clearDataDialog, setClearDataDialog] = useState(false);
   const [reseedDialog, setReseedDialog] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  useEffect(() => {
-    loadSettings();
-  }, []);
-
-  const loadSettings = () => {
-    const savedSettings = localStorageService.getData(STORAGE_KEYS.SETTINGS, defaultSettings);
-    // Safe merger with default object to prevent undefined keys
-    setSettings({
-      ...defaultSettings,
-      ...(savedSettings || {})
-    });
-  };
-
   const handleSaveSettings = () => {
-    localStorageService.setData(STORAGE_KEYS.SETTINGS, settings);
+    dispatch(updateSettings(settings));
     localStorageService.logActivity({
       type: 'update',
       entity: 'settings',
@@ -278,15 +275,15 @@ const Settings = () => {
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5, p: 1.2, bgcolor: '#F8F9FA', borderRadius: 2 }}>
                       <Typography variant="body2" sx={{ fontWeight: 600, color: '#4B5563' }}>Vehicles in Storage</Typography>
-                      <Chip label={`${localStorageService.getData(STORAGE_KEYS.CARS, []).length} Records`} size="small" sx={{ fontWeight: 700 }} />
+                      <Chip label={`${cars.length} Records`} size="small" sx={{ fontWeight: 700 }} />
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5, p: 1.2, bgcolor: '#F8F9FA', borderRadius: 2 }}>
                       <Typography variant="body2" sx={{ fontWeight: 600, color: '#4B5563' }}>Applications in Storage</Typography>
-                      <Chip label={`${localStorageService.getData(STORAGE_KEYS.APPLICATIONS, []).length} Orders`} size="small" sx={{ fontWeight: 700 }} />
+                      <Chip label={`${applications.length} Orders`} size="small" sx={{ fontWeight: 700 }} />
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, p: 1.2, bgcolor: '#F8F9FA', borderRadius: 2 }}>
                       <Typography variant="body2" sx={{ fontWeight: 600, color: '#4B5563' }}>Audit Activity Logs</Typography>
-                      <Chip label={`${localStorageService.getData(STORAGE_KEYS.ACTIVITY_LOGS, []).length} Entries`} size="small" sx={{ fontWeight: 700 }} />
+                      <Chip label={`${notifications.length} Notifications`} size="small" sx={{ fontWeight: 700 }} />
                     </Box>
                   </Grid>
 

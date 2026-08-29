@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -36,8 +37,12 @@ import {
 } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
 import StatusChip from '../../components/common/StatusChip';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
-import { useAuth } from '../../context/AuthContext';
+import localStorageService from '../../services/localStorageService';
+import { selectAuthUser } from '../../redux/auth/authSlice';
+import { selectCars, selectWishlist, toggleWishlist } from '../../redux/cars/carsSlice';
+import { addApplication } from '../../redux/applications/applicationsSlice';
+import { selectCustomers, addCustomer, updateCustomer } from '../../redux/customers/customersSlice';
+import { addNotification } from '../../redux/notifications/notificationsSlice';
 import { formatCurrency, formatCarName } from '../../utils/formatters';
 import { validateApplicationForm } from '../../utils/validators';
 import { PAKISTAN_CITIES, ROLES } from '../../utils/constants';
@@ -46,13 +51,17 @@ import './CarDetails.css';
 const CarDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const dispatch = useDispatch();
+  const user = useSelector(selectAuthUser);
+  const cars = useSelector(selectCars);
+  const wishlist = useSelector(selectWishlist);
+  const customers = useSelector(selectCustomers);
 
   const [car, setCar] = useState(null);
   const [selectedImage, setSelectedImage] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
   const [applyModalOpen, setApplyModalOpen] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const isFavorite = wishlist.includes(id);
   const [successMessage, setSuccessMessage] = useState('');
 
   // Application Modal Form
@@ -69,38 +78,18 @@ const CarDetails = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    loadCar();
-    checkFavorite();
-  }, [id]);
-
-  const loadCar = () => {
-    const cars = localStorageService.getData(STORAGE_KEYS.CARS, []);
     const foundCar = cars.find(c => c.id === id);
     if (foundCar) {
       const availableColors = Array.isArray(foundCar.availableColors) ? foundCar.availableColors : [];
-      const activeColor = availableColors.includes(foundCar.availableColors?.[0]) ? foundCar.availableColors[0] : (availableColors[0] || 'White');
+      const activeColor = availableColors[0] || 'White';
       setCar(foundCar);
       setSelectedImage(foundCar.images?.[0] || '');
       setSelectedColor(activeColor);
     }
-  };
-
-  const checkFavorite = () => {
-    const favs = localStorageService.getData(STORAGE_KEYS.WISHLIST, []);
-    setIsFavorite(favs.includes(id));
-  };
+  }, [id, cars]);
 
   const handleToggleFavorite = () => {
-    const favs = localStorageService.getData(STORAGE_KEYS.WISHLIST, []);
-    let updated;
-    if (favs.includes(id)) {
-      updated = favs.filter(favId => favId !== id);
-      setIsFavorite(false);
-    } else {
-      updated = [...favs, id];
-      setIsFavorite(true);
-    }
-    localStorageService.setData(STORAGE_KEYS.WISHLIST, updated);
+    dispatch(toggleWishlist(id));
   };
 
   const isCarAvailableForCustomer = Boolean(car && car.status === 'available' && (car.stock ?? 0) > 0 && Array.isArray(car.availableColors) && car.availableColors.length > 0);
@@ -165,7 +154,6 @@ const CarDetails = () => {
     setLoading(true);
 
     try {
-      const applications = localStorageService.getData(STORAGE_KEYS.APPLICATIONS, []);
       const newAppId = localStorageService.generateId('APP');
 
       const newApplication = {
@@ -187,11 +175,9 @@ const CarDetails = () => {
         updatedAt: new Date().toISOString()
       };
 
-      applications.unshift(newApplication);
-      localStorageService.setData(STORAGE_KEYS.APPLICATIONS, applications);
+      dispatch(addApplication(newApplication));
 
       // Keep the customer master in sync with applications created in the portal.
-      const customers = localStorageService.getData(STORAGE_KEYS.CUSTOMERS, []);
       const customerRecord = {
         id: localStorageService.generateId('CUST'),
         userId: user?.id,
@@ -206,9 +192,8 @@ const CarDetails = () => {
         updatedAt: new Date().toISOString()
       };
       const customerIndex = customers.findIndex(customer => customer.userId === user?.id || customer.email?.toLowerCase() === customerRecord.email);
-      if (customerIndex >= 0) customers[customerIndex] = { ...customers[customerIndex], ...customerRecord, id: customers[customerIndex].id };
-      else customers.push(customerRecord);
-      localStorageService.setData(STORAGE_KEYS.CUSTOMERS, customers);
+      if (customerIndex >= 0) dispatch(updateCustomer({ ...customerRecord, id: customers[customerIndex].id }));
+      else dispatch(addCustomer(customerRecord));
 
       // Log activity
       localStorageService.logActivity({
@@ -221,12 +206,13 @@ const CarDetails = () => {
       });
 
       // Add in-app notification
-      localStorageService.addNotification({
+      dispatch(addNotification({
+        id: localStorageService.generateId('NOTIF'),
         title: 'New Car Application Received',
         message: `${formData.fullName} applied for ${formatCarName(car)} (${selectedColor}).`,
         type: 'info',
         targetRole: ['admin', 'sales']
-      });
+      }));
 
       setApplyModalOpen(false);
       setSuccessMessage(`Application successfully submitted! Your Tracking ID is ${newAppId}.`);

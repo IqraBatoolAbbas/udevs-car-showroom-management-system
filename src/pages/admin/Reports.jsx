@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   Paper,
   Grid,
@@ -32,6 +33,10 @@ import {
 } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
 import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
+import { selectCars } from '../../redux/cars/carsSlice';
+import { selectSuppliers } from '../../redux/suppliers/suppliersSlice';
+import { selectApplications } from '../../redux/applications/applicationsSlice';
+import { selectCustomers } from '../../redux/customers/customersSlice';
 import { formatCurrency, formatCarName, formatRelativeTime } from '../../utils/formatters';
 import { calculateInventoryStats, calculateApplicationStats, calculateTotalProfit } from '../../utils/calculations';
 import './Reports.css';
@@ -48,17 +53,21 @@ const Reports = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [applications, setApplications] = useState([]);
   const [activityLogs, setActivityLogs] = useState([]);
+  const carsFromStore = useSelector(selectCars);
+  const suppliersFromStore = useSelector(selectSuppliers);
+  const applicationsFromStore = useSelector(selectApplications);
+  const customersFromStore = useSelector(selectCustomers);
 
   useEffect(() => {
     loadReportData();
-  }, []);
+  }, [carsFromStore, suppliersFromStore, applicationsFromStore, customersFromStore]);
 
   const loadReportData = () => {
-    const carsData = localStorageService.getData(STORAGE_KEYS.CARS, []);
-    const appsData = localStorageService.getData(STORAGE_KEYS.APPLICATIONS, []);
-    const custData = localStorageService.getData(STORAGE_KEYS.CUSTOMERS, []);
+    const carsData = carsFromStore;
+    const appsData = applicationsFromStore;
+    const custData = customersFromStore;
     const logsData = localStorageService.getData(STORAGE_KEYS.ACTIVITY_LOGS, []);
-    const supData = localStorageService.getData(STORAGE_KEYS.SUPPLIERS, []);
+    const supData = suppliersFromStore;
 
     const inventoryStats = calculateInventoryStats(carsData);
     const applicationStats = calculateApplicationStats(appsData);
