@@ -25,7 +25,9 @@ import {
   Verified,
 } from "@mui/icons-material";
 
-import { useAuth } from "../../context/AuthContext";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { login } from "../../redux/auth/authSlice";
 import "./Login.css";
 
 const Login = () => {
@@ -38,7 +40,8 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // =========================================================
   // ROLE / DEMO CREDENTIALS
@@ -123,16 +126,12 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const result = login(
-        formData.email.trim(),
-        formData.password
-      );
-
-      if (!result.success) {
-        setError(result.error || "Invalid email or password.");
-      }
-
-      // Successful navigation is handled by AuthContext
+      const result = await dispatch(login({
+        email: formData.email.trim(),
+        password: formData.password
+      })).unwrap();
+      const destinations = { admin: '/admin/dashboard', sales: '/sales/dashboard', inventory: '/inventory/dashboard', customer: '/customer/dashboard' };
+      navigate(destinations[result.role] || '/');
     } catch (err) {
       console.error(err);
       setError("An error occurred during login.");

@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Paper,
   Table,
@@ -29,30 +30,23 @@ import { Assignment, Download, Search, Edit, History, Close } from '@mui/icons-m
 import PageHeader from '../../components/common/PageHeader';
 import ApplicationStatus from '../../components/applications/ApplicationStatus';
 import EmptyState from '../../components/common/EmptyState';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
+import localStorageService from '../../services/localStorageService';
+import { selectApplications, updateApplication } from '../../redux/applications/applicationsSlice';
+import { selectCars } from '../../redux/cars/carsSlice';
+import { addNotification } from '../../redux/notifications/notificationsSlice';
 import { formatRelativeTime, formatCarName, formatCurrency } from '../../utils/formatters';
 import { APPLICATION_STATUS } from '../../utils/constants';
 import './Applications.css';
 
 const Applications = () => {
-  const [applications, setApplications] = useState([]);
-  const [cars, setCars] = useState([]);
+  const dispatch = useDispatch();
+  const applications = useSelector(selectApplications);
+  const cars = useSelector(selectCars);
   const [statusFilter, setStatusFilter] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusDialog, setStatusDialog] = useState({ open: false, application: null, newStatus: '' });
   const [historyDialog, setHistoryDialog] = useState({ open: false, application: null });
   const [notes, setNotes] = useState('');
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = () => {
-    const applicationsData = localStorageService.getData(STORAGE_KEYS.APPLICATIONS, []);
-    const carsData = localStorageService.getData(STORAGE_KEYS.CARS, []);
-    setApplications(applicationsData);
-    setCars(carsData);
-  };
 
   const filteredApplications = applications.filter(app => {
     const matchesStatus = !statusFilter || app.status === statusFilter;
@@ -74,26 +68,20 @@ const Applications = () => {
 
   const handleStatusConfirm = () => {
     if (statusDialog.application) {
-      const updatedApplications = applications.map(app => {
-        if (app.id === statusDialog.application.id) {
-          return {
-            ...app,
+      const updatedApplication = {
+        ...statusDialog.application,
+        status: statusDialog.newStatus,
+        statusHistory: [
+          ...(statusDialog.application.statusHistory || []),
+          {
             status: statusDialog.newStatus,
-            statusHistory: [
-              ...(app.statusHistory || []),
-              {
-                status: statusDialog.newStatus,
-                timestamp: new Date().toISOString(),
-                notes: notes || `Status changed to ${statusDialog.newStatus}`
-              }
-            ],
-            updatedAt: new Date().toISOString()
-          };
-        }
-        return app;
-      });
-
-      localStorageService.setData(STORAGE_KEYS.APPLICATIONS, updatedApplications);
+            timestamp: new Date().toISOString(),
+            notes: notes || `Status changed to ${statusDialog.newStatus}`
+          }
+        ],
+        updatedAt: new Date().toISOString()
+      };
+      dispatch(updateApplication(updatedApplication));
       
       // Log activity
       localStorageService.logActivity({
@@ -104,15 +92,14 @@ const Applications = () => {
       });
 
       // Add Notification
-      localStorageService.addNotification({
+      dispatch(addNotification({
+        id: localStorageService.generateId('NOTIF'),
         title: `Order Status Updated: ${statusDialog.newStatus.toUpperCase()}`,
         message: `Application ${statusDialog.application.id} for ${statusDialog.application.fullName} is now ${statusDialog.newStatus}.`,
         type: statusDialog.newStatus === 'completed' || statusDialog.newStatus === 'approved' ? 'success' : statusDialog.newStatus === 'rejected' ? 'error' : 'info',
         targetRole: ['customer'],
         targetUserId: statusDialog.application.customerUserId || null
-      });
-
-      setApplications(updatedApplications);
+      }));
       setStatusDialog({ open: false, application: null, newStatus: '' });
       setNotes('');
     }

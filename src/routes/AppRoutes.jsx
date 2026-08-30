@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from '../context/AuthContext';
 import Login from '../pages/auth/Login';
 import Home from '../pages/home/Home';
 import ProtectedRoute from './ProtectedRoute';
@@ -58,8 +57,7 @@ const NotFound = () => (
 const AppRoutes = () => {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
-      <AuthProvider>
-        <Routes>
+      <Routes>
           {/* Public Login Route */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -150,8 +148,7 @@ const AppRoutes = () => {
           
           {/* Default redirect */}
           <Route path="*" element={<Navigate to="/404" replace />} />
-        </Routes>
-      </AuthProvider>
+      </Routes>
     </BrowserRouter>
   );
 };

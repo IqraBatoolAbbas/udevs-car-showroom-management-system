@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   Drawer,
   Box,
@@ -23,56 +23,30 @@ import {
   DoneAll,
   DeleteOutline
 } from '@mui/icons-material';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
 import { formatRelativeTime } from '../../utils/formatters';
-import { useAuth } from '../../context/AuthContext';
+import { selectAuthUser } from '../../redux/auth/authSlice';
+import { selectNotifications, markNotificationRead, removeNotification } from '../../redux/notifications/notificationsSlice';
 
 const NotificationDrawer = ({ open, onClose, userRole }) => {
-  const [notifications, setNotifications] = useState([]);
-  const { user } = useAuth();
-
-  useEffect(() => {
-    if (open) {
-      loadNotifications();
-    }
-  }, [open]);
-
-  const loadNotifications = () => {
-    const allNotifs = localStorageService.getData(STORAGE_KEYS.NOTIFICATIONS, []);
-    // Filter for user role or global
-    const filtered = allNotifs.filter(n => {
-      if (n.targetUserId && n.targetUserId !== user?.id) return false;
-      return !n.targetRole || n.targetRole.includes(userRole) || n.targetRole.includes('all');
-    });
-    setNotifications(filtered);
-  };
+  const dispatch = useDispatch();
+  const user = useSelector(selectAuthUser);
+  const allNotifs = useSelector(selectNotifications);
+  const notifications = allNotifs.filter(n => {
+    if (n.targetUserId && n.targetUserId !== user?.id) return false;
+    return !n.targetRole || n.targetRole.includes(userRole) || n.targetRole.includes('all');
+  });
 
   const handleMarkAllRead = () => {
-    const allNotifs = localStorageService.getData(STORAGE_KEYS.NOTIFICATIONS, []);
-    const updated = allNotifs.map(n => {
-      const belongsToUser = !n.targetUserId || n.targetUserId === user?.id;
-      const visibleToRole = !n.targetRole || n.targetRole.includes(userRole) || n.targetRole.includes('all');
-      return belongsToUser && visibleToRole ? { ...n, read: true } : n;
-    });
-    localStorageService.setData(STORAGE_KEYS.NOTIFICATIONS, updated);
-    loadNotifications();
+    notifications.filter(notification => !notification.read)
+      .forEach(notification => dispatch(markNotificationRead(notification.id)));
   };
 
   const handleClearAll = () => {
-    const remaining = localStorageService.getData(STORAGE_KEYS.NOTIFICATIONS, []).filter(n => {
-      const belongsToUser = !n.targetUserId || n.targetUserId === user?.id;
-      const visibleToRole = !n.targetRole || n.targetRole.includes(userRole) || n.targetRole.includes('all');
-      return !(belongsToUser && visibleToRole);
-    });
-    localStorageService.setData(STORAGE_KEYS.NOTIFICATIONS, remaining);
-    setNotifications([]);
+    notifications.forEach(notification => dispatch(removeNotification(notification.id)));
   };
 
   const handleNotificationClick = (id) => {
-    const allNotifs = localStorageService.getData(STORAGE_KEYS.NOTIFICATIONS, []);
-    const updated = allNotifs.map(n => n.id === id ? { ...n, read: true } : n);
-    localStorageService.setData(STORAGE_KEYS.NOTIFICATIONS, updated);
-    loadNotifications();
+    dispatch(markNotificationRead(id));
   };
 
   const getIcon = (type) => {

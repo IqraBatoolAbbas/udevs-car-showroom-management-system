@@ -37,11 +37,12 @@ import {
   DarkMode,
   LightMode
 } from '@mui/icons-material';
-import { useAuth } from '../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectAuthUser, logout } from '../redux/auth/authSlice';
 import { MENU_ITEMS } from '../utils/constants';
-import localStorageService, { STORAGE_KEYS } from '../services/localStorageService';
 import NotificationDrawer from '../components/common/NotificationDrawer';
-import { useThemeMode } from '../context/ThemeModeContext';
+import { selectThemeMode, toggleTheme } from '../redux/theme/themeSlice';
+import { selectNotifications } from '../redux/notifications/notificationsSlice';
 
 const CustomerLayout = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -51,15 +52,17 @@ const CustomerLayout = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth();
-  const { mode, toggleThemeMode } = useThemeMode();
+  const dispatch = useDispatch();
+  const user = useSelector(selectAuthUser);
+  const mode = useSelector(selectThemeMode);
+  const notifications = useSelector(selectNotifications);
 
   useEffect(() => {
     loadNotificationsCount();
-  }, [location.pathname, notifOpen]);
+  }, [location.pathname, notifOpen, notifications]);
 
   const loadNotificationsCount = () => {
-    const notifs = localStorageService.getData(STORAGE_KEYS.NOTIFICATIONS, []);
+    const notifs = notifications;
     const unread = notifs.filter(n =>
       (!n.targetUserId || n.targetUserId === user?.id) &&
       (!n.targetRole || n.targetRole.includes('customer') || n.targetRole.includes('all')) && !n.read
@@ -77,7 +80,7 @@ const CustomerLayout = () => {
 
   const handleLogout = () => {
     handleProfileMenuClose();
-    logout();
+    dispatch(logout());
   };
 
   const menuItems = MENU_ITEMS[user?.role] || [];
@@ -164,7 +167,7 @@ const CustomerLayout = () => {
             {/* Actions & Profile */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               <Tooltip title={mode === 'light' ? 'Enable dark mode' : 'Enable light mode'}>
-                <IconButton onClick={toggleThemeMode} sx={{ color: 'rgba(255,255,255,0.85)' }}>
+                <IconButton onClick={() => dispatch(toggleTheme())} sx={{ color: 'rgba(255,255,255,0.85)' }}>
                   {mode === 'light' ? <DarkMode fontSize="small" /> : <LightMode fontSize="small" />}
                 </IconButton>
               </Tooltip>

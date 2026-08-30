@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
@@ -16,15 +17,18 @@ import {
 } from '@mui/material';
 import { ArrowBack, Save, Business, ContactPhone } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
+import localStorageService from '../../services/localStorageService';
 import { validateSupplierForm } from '../../utils/validators';
 import { SUPPLIER_STATUS, PAKISTAN_CITIES, ROLES } from '../../utils/constants';
-import { useAuth } from '../../context/AuthContext';
+import { selectAuthUser } from '../../redux/auth/authSlice';
+import { selectSuppliers, addSupplier, updateSupplier } from '../../redux/suppliers/suppliersSlice';
 
 const AddSupplier = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { user } = useAuth();
+  const dispatch = useDispatch();
+  const user = useSelector(selectAuthUser);
+  const suppliers = useSelector(selectSuppliers);
   const isEdit = !!id;
 
   const [formData, setFormData] = useState({
@@ -45,17 +49,10 @@ const AddSupplier = () => {
 
   useEffect(() => {
     if (isEdit) {
-      loadSupplierData();
+      const supplier = suppliers.find(item => item.id === id);
+      if (supplier) setFormData(supplier);
     }
-  }, [id, isEdit]);
-
-  const loadSupplierData = () => {
-    const suppliers = localStorageService.getData(STORAGE_KEYS.SUPPLIERS, []);
-    const supplier = suppliers.find(s => s.id === id);
-    if (supplier) {
-      setFormData(supplier);
-    }
-  };
+  }, [id, isEdit, suppliers]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -85,8 +82,6 @@ const AddSupplier = () => {
     setLoading(true);
 
     try {
-      const suppliers = localStorageService.getData(STORAGE_KEYS.SUPPLIERS, []);
-
       const supplierData = {
         ...formData,
         phone: formData.phone.trim(),
@@ -94,9 +89,8 @@ const AddSupplier = () => {
       };
 
       if (isEdit) {
-        const index = suppliers.findIndex(s => s.id === id);
-        if (index !== -1) {
-          suppliers[index] = { ...suppliers[index], ...supplierData, updatedAt: new Date().toISOString() };
+        if (suppliers.some(s => s.id === id)) {
+          dispatch(updateSupplier({ id, ...supplierData, updatedAt: new Date().toISOString() }));
           localStorageService.logActivity({
             type: 'update',
             entity: 'supplier',
@@ -107,7 +101,7 @@ const AddSupplier = () => {
       } else {
         supplierData.id = localStorageService.generateId('SUP');
         supplierData.createdAt = new Date().toISOString();
-        suppliers.push(supplierData);
+        dispatch(addSupplier(supplierData));
         localStorageService.logActivity({
           type: 'create',
           entity: 'supplier',
@@ -116,7 +110,6 @@ const AddSupplier = () => {
         });
       }
 
-      localStorageService.setData(STORAGE_KEYS.SUPPLIERS, suppliers);
       const basePath = user?.role === ROLES.INVENTORY ? '/inventory' : '/admin';
       navigate(`${basePath}/suppliers`);
     } catch (error) {

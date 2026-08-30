@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -22,14 +23,19 @@ import {
 import PageHeader from '../../components/common/PageHeader';
 import CarCard from '../../components/cars/CarCard';
 import CarCompareModal from '../../components/cars/CarCompareModal';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
-import { useAuth } from '../../context/AuthContext';
+import { selectAuthUser } from '../../redux/auth/authSlice';
+import { selectCars, selectWishlist, toggleWishlist } from '../../redux/cars/carsSlice';
+import { selectApplications } from '../../redux/applications/applicationsSlice';
 import { formatRelativeTime } from '../../utils/formatters';
 import './Dashboard.css';
 
 const CustomerDashboard = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const dispatch = useDispatch();
+  const user = useSelector(selectAuthUser);
+  const cars = useSelector(selectCars);
+  const applications = useSelector(selectApplications);
+  const favorites = useSelector(selectWishlist);
   const [stats, setStats] = useState({
     availableCars: 0,
     myApplications: 0,
@@ -37,20 +43,14 @@ const CustomerDashboard = () => {
   });
   const [recentCars, setRecentCars] = useState([]);
   const [recentApplications, setRecentApplications] = useState([]);
-  const [favorites, setFavorites] = useState([]);
   const [compareList, setCompareList] = useState([]);
   const [compareModalOpen, setCompareModalOpen] = useState(false);
 
   useEffect(() => {
     loadDashboardData();
-  }, []);
+  }, [cars, applications, user]);
 
   const loadDashboardData = () => {
-    const cars = localStorageService.getData(STORAGE_KEYS.CARS, []);
-    const applications = localStorageService.getData(STORAGE_KEYS.APPLICATIONS, []);
-    const savedFavs = localStorageService.getData(STORAGE_KEYS.WISHLIST, []);
-    setFavorites(savedFavs);
-
     const availableCars = cars.filter(car => car.status === 'available');
     setRecentCars(availableCars.slice(0, 3));
 
@@ -66,15 +66,7 @@ const CustomerDashboard = () => {
   };
 
   const handleToggleFavorite = (car) => {
-    const isFav = favorites.includes(car.id);
-    let updated;
-    if (isFav) {
-      updated = favorites.filter(id => id !== car.id);
-    } else {
-      updated = [...favorites, car.id];
-    }
-    setFavorites(updated);
-    localStorageService.setData(STORAGE_KEYS.WISHLIST, updated);
+    dispatch(toggleWishlist(car.id));
   };
 
   const handleToggleCompare = (car) => {

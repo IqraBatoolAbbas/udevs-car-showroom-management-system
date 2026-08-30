@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
@@ -19,11 +20,13 @@ import {
 } from '@mui/material';
 import { ArrowBack, Save, DirectionsCar, AttachMoney, TrendingUp, Warning } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
+import localStorageService from '../../services/localStorageService';
 import { validateCarForm } from '../../utils/validators';
 import { calculateProfit, calculateProfitMargin } from '../../utils/calculations';
 import { CAR_STATUS, FUEL_TYPES, TRANSMISSION_TYPES, CAR_COLORS } from '../../utils/constants';
 import { formatCurrency } from '../../utils/formatters';
+import { selectSuppliers } from '../../redux/suppliers/suppliersSlice';
+import { selectCars, addCar, updateCar } from '../../redux/cars/carsSlice';
 
 const AddCar = () => {
   const navigate = useNavigate();
@@ -31,6 +34,9 @@ const AddCar = () => {
   const { id } = useParams();
   const isEdit = !!id;
   const basePath = location.pathname.startsWith('/inventory/') ? '/inventory' : '/admin';
+  const dispatch = useDispatch();
+  const suppliers = useSelector(selectSuppliers);
+  const cars = useSelector(selectCars);
 
   const [formData, setFormData] = useState({
     make: '',
@@ -51,35 +57,18 @@ const AddCar = () => {
     supplierId: ''
   });
 
-  const [suppliers, setSuppliers] = useState([]);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    loadSuppliers();
+    if (suppliers.length > 0 && !formData.supplierId && !isEdit) {
+      setFormData(prev => ({ ...prev, supplierId: suppliers[0].id }));
+    }
     if (isEdit) {
-      loadCarData();
+      const car = cars.find(item => item.id === id);
+      if (car) setFormData({ ...car, images: car.images?.length > 0 ? car.images : [''] });
     }
-  }, [id, isEdit]);
-
-  const loadSuppliers = () => {
-    const suppliersData = localStorageService.getData(STORAGE_KEYS.SUPPLIERS, []);
-    setSuppliers(suppliersData);
-    if (suppliersData.length > 0 && !formData.supplierId && !isEdit) {
-      setFormData(prev => ({ ...prev, supplierId: suppliersData[0].id }));
-    }
-  };
-
-  const loadCarData = () => {
-    const cars = localStorageService.getData(STORAGE_KEYS.CARS, []);
-    const car = cars.find(c => c.id === id);
-    if (car) {
-      setFormData({
-        ...car,
-        images: car.images?.length > 0 ? car.images : ['']
-      });
-    }
-  };
+  }, [id, isEdit, suppliers, cars]);
 
   const handleChange = (e) => {
   const { name, value } = e.target;
@@ -144,7 +133,6 @@ const AddCar = () => {
     setLoading(true);
 
     try {
-      const cars = localStorageService.getData(STORAGE_KEYS.CARS, []);
       const profit = calculateProfit(parseFloat(formData.sellingPrice), parseFloat(formData.purchaseRate));
       const margin = parseFloat(calculateProfitMargin(profit, parseFloat(formData.sellingPrice)));
 
@@ -162,9 +150,8 @@ const AddCar = () => {
 };
 
       if (isEdit) {
-        const index = cars.findIndex(c => c.id === id);
-        if (index !== -1) {
-          cars[index] = { ...cars[index], ...carData, updatedAt: new Date().toISOString() };
+        if (cars.some(c => c.id === id)) {
+          dispatch(updateCar({ id, ...carData, updatedAt: new Date().toISOString() }));
           localStorageService.logActivity({
             type: 'update',
             entity: 'car',
@@ -175,7 +162,7 @@ const AddCar = () => {
       } else {
         carData.id = localStorageService.generateId('CAR');
         carData.createdAt = new Date().toISOString();
-        cars.push(carData);
+        dispatch(addCar(carData));
         localStorageService.logActivity({
           type: 'create',
           entity: 'car',
@@ -184,7 +171,6 @@ const AddCar = () => {
         });
       }
 
-      localStorageService.setData(STORAGE_KEYS.CARS, cars);
       navigate(`${basePath}/cars`);
     } catch (error) {
       console.error('Error saving car:', error);

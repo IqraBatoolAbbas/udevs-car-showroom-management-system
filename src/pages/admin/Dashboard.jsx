@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { 
   Grid, 
@@ -29,12 +30,18 @@ import {
 import StatCard from '../../components/common/StatCard';
 import PageHeader from '../../components/common/PageHeader';
 import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
+import { selectCars } from '../../redux/cars/carsSlice';
+import { selectApplications } from '../../redux/applications/applicationsSlice';
+import { selectCustomers } from '../../redux/customers/customersSlice';
 import { calculateInventoryStats, calculateApplicationStats, calculateTotalProfit } from '../../utils/calculations';
 import { formatCurrency, formatRelativeTime } from '../../utils/formatters';
 import './Dashboard.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const cars = useSelector(selectCars);
+  const applications = useSelector(selectApplications);
+  const customers = useSelector(selectCustomers);
   const [stats, setStats] = useState({
     inventory: null,
     applications: null,
@@ -48,9 +55,6 @@ const Dashboard = () => {
   
 
   const loadDashboardData = () => {
-    const cars = localStorageService.getData(STORAGE_KEYS.CARS, []);
-    const applications = localStorageService.getData(STORAGE_KEYS.APPLICATIONS, []);
-    const customers = localStorageService.getData(STORAGE_KEYS.CUSTOMERS, []);
     const activityLogs = localStorageService.getData(STORAGE_KEYS.ACTIVITY_LOGS, []);
 
     // Calculate statistics dynamically
@@ -76,7 +80,7 @@ const Dashboard = () => {
   };
     useEffect(() => {
         loadDashboardData();
-      }, []);
+      }, [cars, applications, customers]);
   const getStatusChipColor = (status) => {
     switch (status?.toLowerCase()) {
       case 'approved': return { bg: 'rgba(59, 130, 246, 0.15)', color: '#2563EB' };

@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -36,31 +37,21 @@ import {
 import PageHeader from '../../components/common/PageHeader';
 import ApplicationStatus from '../../components/applications/ApplicationStatus';
 import EmptyState from '../../components/common/EmptyState';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
-import { useAuth } from '../../context/AuthContext';
+import { selectAuthUser } from '../../redux/auth/authSlice';
+import { selectApplications } from '../../redux/applications/applicationsSlice';
 import { formatRelativeTime } from '../../utils/formatters';
 import './MyApplications.css';
 
 const MyApplications = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const [applications, setApplications] = useState([]);
+  const user = useSelector(selectAuthUser);
+  const allApplications = useSelector(selectApplications);
+  const applications = allApplications.filter(app => app && (
+    app.customerUserId === user?.id ||
+    (!app.customerUserId && app.email && app.email.toLowerCase() === user?.email?.toLowerCase())
+  ));
   const [selectedApp, setSelectedApp] = useState(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
-
-  useEffect(() => {
-    loadUserApplications();
-  }, [user]);
-
-  const loadUserApplications = () => {
-    const allApps = localStorageService.getData(STORAGE_KEYS.APPLICATIONS, []);
-    // Prefer the immutable account ID; email keeps older seeded applications compatible.
-    const userApps = (allApps || []).filter(app => app && (
-      app.customerUserId === user?.id ||
-      (!app.customerUserId && app.email && app.email.toLowerCase() === user?.email?.toLowerCase())
-    ));
-    setApplications(userApps);
-  };
 
   const handleViewDetails = (app) => {
     if (!app) return;
