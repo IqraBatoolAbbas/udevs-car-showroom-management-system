@@ -55,7 +55,7 @@
       rgba(3, 8, 17, 0.48) 58%,
       rgba(3, 8, 17, 0.18) 100%
     ),
-    url("/images/pic15.png");
+    url("/udevs-car-showroom-management-system/images/car1.jpg");
 
   background-size: cover;
   background-position: center;
@@ -673,7 +673,7 @@
         rgba(3, 8, 17, 0.93),
         rgba(3, 8, 17, 0.62)
       ),
-      url("/images/pic15.png");
+      url("/udevs-car-showroom-management-system/images/pic15.png");
   }
 
   .home-content {

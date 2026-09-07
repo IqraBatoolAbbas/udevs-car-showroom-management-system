@@ -29,10 +29,10 @@ const seedDemoData = async () => {
       make: 'Toyota', model: 'Corolla', year: 2025, variant: 'Grande', purchaseRate: 6500000,
       sellingPrice: 7250000, profit: 750000, profitMargin: 10.34, availableColors: ['White', 'Black', 'Silver'],
       stock: 5, fuel: 'Petrol', transmission: 'Automatic', mileage: 0, engine: '1800cc',
-      images: ['/images/pic1.png', '/images/pic2.png'], description: 'Premium sedan with advanced features.', status: 'available', supplierId: supplier.id
+      images: ['/udevs-car-showroom-management-system/images/car1.jpg', '/udevs-car-showroom-management-system/images/car2.jpg'], description: 'Premium sedan with advanced features.', status: 'available', supplierId: supplier.id
     }
   });
-  await primaryCar.update({ status: 'available', stock: 5, images: ['/images/pic1.png', '/images/pic2.png'] });
+  await primaryCar.update({ status: 'available', stock: 5, images: ['/udevs-car-showroom-management-system/images/car1.jpg', '/udevs-car-showroom-management-system/images/car2.jpg'] });
   const showroomCars = [
     ['CAR_TOYOTA002', 'Toyota', 'Yaris', 'Ativ', 4300000, 7, '1300cc', 'Petrol'],
     ['CAR_HONDA001', 'Honda', 'Civic', 'Turbo', 9500000, 3, '1500cc Turbo', 'Petrol'],
@@ -48,11 +48,11 @@ const seedDemoData = async () => {
         make, model, variant, year: 2025, purchaseRate: Math.round(sellingPrice * 0.9),
         sellingPrice, profit: Math.round(sellingPrice * 0.1), profitMargin: 10,
         availableColors: ['White', 'Black', 'Silver', 'Red'], stock, fuel, transmission: 'Automatic',
-        mileage: 0, engine, images: [`/images/pic${index + 1}.png`, `/images/pic${(index + 2) % 7 + 1}.png`], description: `${make} ${model} ${variant} - showroom vehicle with verified specifications.`,
+        mileage: 0, engine, images: [`/udevs-car-showroom-management-system/images/car${index + 1}.jpg`, `/udevs-car-showroom-management-system/images/car${(index + 2) % 7 + 1}.jpg`], description: `${make} ${model} ${variant} - showroom vehicle with verified specifications.`,
         status: 'available', supplierId: supplier.id
       }
     });
-    await car.update({ status: 'available', stock, images: [`/images/pic${index + 1}.png`, `/images/pic${(index + 2) % 7 + 1}.png`] });
+    await car.update({ status: 'available', stock, images: [`/udevs-car-showroom-management-system/images/car${index + 1}.jpg`, `/udevs-car-showroom-management-system/images/car${(index + 2) % 7 + 1}.jpg`] });
   }
   const [customer] = await Customer.findOrCreate({
     where: { id: 'CUST_001' },

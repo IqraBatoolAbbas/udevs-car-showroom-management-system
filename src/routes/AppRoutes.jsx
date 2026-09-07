@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import Login from '../pages/auth/Login';
 import Home from '../pages/home/Home';
 import ProtectedRoute from './ProtectedRoute';
@@ -36,9 +36,9 @@ const Unauthorized = () => (
     <p style={{ fontSize: '1.1rem', color: '#6B7280', maxWidth: 450, marginBottom: 24 }}>
       You do not have the required permissions to view this module. Please login with an authorized account.
     </p>
-    <a href="/login" style={{ padding: '10px 24px', background: '#1565C0', color: 'white', borderRadius: 8, textDecoration: 'none', fontWeight: 600 }}>
+    <Link to="/login" style={{ padding: '10px 24px', background: '#1565C0', color: 'white', borderRadius: 8, textDecoration: 'none', fontWeight: 600 }}>
       Return to Login
-    </a>
+    </Link>
   </div>
 );
 
@@ -48,16 +48,16 @@ const NotFound = () => (
     <p style={{ fontSize: '1.1rem', color: '#6B7280', maxWidth: 450, marginBottom: 24 }}>
       The showroom or management page you are looking for does not exist or has been moved.
     </p>
-    <a href="/login" style={{ padding: '10px 24px', background: '#1565C0', color: 'white', borderRadius: 8, textDecoration: 'none', fontWeight: 600 }}>
+    <Link to="/login" style={{ padding: '10px 24px', background: '#1565C0', color: 'white', borderRadius: 8, textDecoration: 'none', fontWeight: 600 }}>
       Back to Home
-    </a>
+    </Link>
   </div>
 );
 
 const AppRoutes = () => {
   return (
     <BrowserRouter
-      basename={import.meta.env.BASE_URL}
+      basename={import.meta.env.BASE_URL.replace(/\/$/, '')}
       future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
     >
       <Routes>

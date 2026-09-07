@@ -141,7 +141,7 @@ const CarCompareModal = ({ open, onClose, compareCars = [], onRemoveCar, onSelec
         <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid rgba(0,0,0,0.08)', borderRadius: 3 }}>
           <Table>
             <TableHead>
-              <TableRow sx={{ bgcolor: '#F8F9FA' }}>
+              <TableRow sx={{ bgcolor: '#ffffff' }}>
                 <TableCell sx={{ width: 180, fontWeight: 700, color: '#4B5563' }}>Feature</TableCell>
                 {compareCars.map((car) => (
                   <TableCell key={car.id} sx={{ minWidth: 220, position: 'relative', textAlign: 'center' }}>
@@ -177,7 +177,7 @@ const CarCompareModal = ({ open, onClose, compareCars = [], onRemoveCar, onSelec
         </TableContainer>
       </DialogContent>
 
-      <DialogActions sx={{ p: 2.5, bgcolor: '#F8F9FA', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+      <DialogActions sx={{ p: 2.5, bgcolor: '#ffffff', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
         <Button onClick={onClose} variant="outlined" sx={{ borderRadius: 2 }}>
           Close Comparison
         </Button>

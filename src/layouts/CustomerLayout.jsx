@@ -93,7 +93,7 @@ const CustomerLayout = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: '#F8F9FA' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: '#ffffff' }}>
       {/* Top Bar Navigation */}
       <AppBar 
         position="sticky" 
