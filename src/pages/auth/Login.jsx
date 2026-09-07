@@ -504,7 +504,7 @@ const Login = () => {
                 </span>
 
                 <span>
-                  Frontend • LocalStorage
+                  Secure API • PostgreSQL
                 </span>
 
               </div>

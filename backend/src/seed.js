@@ -31,6 +31,26 @@ const accounts = [
       images: [], description: 'Premium sedan with advanced features.', status: 'available', supplierId: supplier.id
     }
   });
+  const showroomCars = [
+    ['CAR_TOYOTA002', 'Toyota', 'Yaris', 'Ativ', 4300000, 7, '1300cc', 'Petrol'],
+    ['CAR_HONDA001', 'Honda', 'Civic', 'Turbo', 9500000, 3, '1500cc Turbo', 'Petrol'],
+    ['CAR_HONDA002', 'Honda', 'City', 'Aspire', 4700000, 6, '1500cc', 'Petrol'],
+    ['CAR_SUZUKI001', 'Suzuki', 'Cultus', 'VXR', 3200000, 10, '1200cc', 'Petrol'],
+    ['CAR_HYUNDAI001', 'Hyundai', 'Elantra', 'GLS', 6200000, 4, '1600cc', 'Petrol'],
+    ['CAR_HYUNDAI002', 'Hyundai', 'Tucson', 'FWD', 8500000, 2, '2000cc', 'Petrol']
+  ];
+  for (const [id, make, model, variant, sellingPrice, stock, engine, fuel] of showroomCars) {
+    await Car.findOrCreate({
+      where: { id },
+      defaults: {
+        make, model, variant, year: 2025, purchaseRate: Math.round(sellingPrice * 0.9),
+        sellingPrice, profit: Math.round(sellingPrice * 0.1), profitMargin: 10,
+        availableColors: ['White', 'Black', 'Silver', 'Red'], stock, fuel, transmission: 'Automatic',
+        mileage: 0, engine, images: [], description: `${make} ${model} ${variant} - showroom vehicle with verified specifications.`,
+        status: 'available', supplierId: supplier.id
+      }
+    });
+  }
   const [customer] = await Customer.findOrCreate({
     where: { id: 'CUST_001' },
     defaults: { name: 'John Doe', email: 'customer@udevs.com', phone: '+92-300-1234567', city: 'Lahore', status: 'active', userId: 'USR_CUST001' }

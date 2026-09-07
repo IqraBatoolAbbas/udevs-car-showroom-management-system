@@ -30,7 +30,7 @@ import { Assignment, Download, Search, Edit, History, Close } from '@mui/icons-m
 import PageHeader from '../../components/common/PageHeader';
 import ApplicationStatus from '../../components/applications/ApplicationStatus';
 import EmptyState from '../../components/common/EmptyState';
-import * as localStorageService from '../../services/appService';
+import * as appService from '../../services/appService';
 import { selectApplications, updateApplication } from '../../redux/applications/applicationsSlice';
 import { selectCars } from '../../redux/cars/carsSlice';
 import { addNotification } from '../../redux/notifications/notificationsSlice';
@@ -84,7 +84,7 @@ const Applications = () => {
       dispatch(updateApplication(updatedApplication));
       
       // Log activity
-      localStorageService.logActivity({
+      appService.logActivity({
         type: 'status_change',
         entity: 'application',
         entityId: statusDialog.application.id,
@@ -93,7 +93,7 @@ const Applications = () => {
 
       // Add Notification
       dispatch(addNotification({
-        id: localStorageService.generateId('NOTIF'),
+        id: appService.generateId('NOTIF'),
         title: `Order Status Updated: ${statusDialog.newStatus.toUpperCase()}`,
         message: `Application ${statusDialog.application.id} for ${statusDialog.application.fullName} is now ${statusDialog.newStatus}.`,
         type: statusDialog.newStatus === 'completed' || statusDialog.newStatus === 'approved' ? 'success' : statusDialog.newStatus === 'rejected' ? 'error' : 'info',

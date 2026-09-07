@@ -37,7 +37,7 @@ import {
 } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
 import StatusChip from '../../components/common/StatusChip';
-import * as localStorageService from '../../services/appService';
+import * as appService from '../../services/appService';
 import { selectAuthUser } from '../../redux/auth/authSlice';
 import { selectCars, selectWishlist, toggleWishlist } from '../../redux/cars/carsSlice';
 import { addApplication } from '../../redux/applications/applicationsSlice';
@@ -154,7 +154,7 @@ const CarDetails = () => {
     setLoading(true);
 
     try {
-      const newAppId = localStorageService.generateId('APP');
+      const newAppId = appService.generateId('APP');
 
       const newApplication = {
         id: newAppId,
@@ -179,7 +179,7 @@ const CarDetails = () => {
 
       // Keep the customer master in sync with applications created in the portal.
       const customerRecord = {
-        id: localStorageService.generateId('CUST'),
+        id: appService.generateId('CUST'),
         userId: user?.id,
         name: formData.fullName,
         email: formData.email.toLowerCase(),
@@ -196,7 +196,7 @@ const CarDetails = () => {
       else dispatch(addCustomer(customerRecord));
 
       // Log activity
-      localStorageService.logActivity({
+      appService.logActivity({
         type: 'create',
         entity: 'application',
         entityId: newAppId,
@@ -207,7 +207,7 @@ const CarDetails = () => {
 
       // Add in-app notification
       dispatch(addNotification({
-        id: localStorageService.generateId('NOTIF'),
+        id: appService.generateId('NOTIF'),
         title: 'New Car Application Received',
         message: `${formData.fullName} applied for ${formatCarName(car)} (${selectedColor}).`,
         type: 'info',

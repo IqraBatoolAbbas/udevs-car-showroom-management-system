@@ -87,7 +87,7 @@ const Settings = () => {
     <div className="settings-page">
       <PageHeader
         title="Showroom & System Preferences"
-        subtitle="Manage business settings, low stock thresholds, and local storage data"
+        subtitle="Manage business settings, low stock thresholds, and server-backed data"
         action={
           <Button
             variant="contained"
@@ -209,7 +209,7 @@ const Settings = () => {
           </Paper>
         </Grid>
 
-        {/* Right Column: Notifications & LocalStorage Architecture */}
+        {/* Right Column: Notifications & API Architecture */}
         <Grid item xs={12} lg={6}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3.5 }}>
             <Paper className="settings-section" elevation={0}>
@@ -249,19 +249,19 @@ const Settings = () => {
               </CardContent>
             </Paper>
 
-            {/* LocalStorage Data Architecture & Health */}
+            {/* API and database architecture health */}
             <Paper className="settings-section" elevation={0}>
               <div className="section-header">
                 <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: 1.2, fontSize: '1.05rem' }}>
                   <Storage />
-                  LocalStorage Architecture Status
+                  API & Database Status
                 </Typography>
               </div>
               <CardContent className="settings-content" sx={{ p: 3.5 }}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5, p: 1.2, bgcolor: '#F8F9FA', borderRadius: 2 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 600, color: '#4B5563' }}>Total LocalStorage Payload</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 600, color: '#4B5563' }}>Storage Provider</Typography>
                       <Chip label={getStorageInfo()} size="small" color="primary" sx={{ fontWeight: 800 }} />
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5, p: 1.2, bgcolor: '#F8F9FA', borderRadius: 2 }}>
@@ -312,7 +312,7 @@ const Settings = () => {
         <DialogTitle sx={{ fontWeight: 700 }}>Reseed All Showroom Demo Data?</DialogTitle>
         <DialogContent>
           <Typography variant="body2">
-            This will reset your LocalStorage and repopulate all vehicles, suppliers, demo customers, applications, and logs to the original realistic seed data.
+            This action is managed by the server database. Use the backend seed command when demo data must be restored.
           </Typography>
         </DialogContent>
         <DialogActions sx={{ p: 2.5 }}>
@@ -325,7 +325,7 @@ const Settings = () => {
 
       {/* Clear Data Dialog */}
       <Dialog open={clearDataDialog} onClose={() => setClearDataDialog(false)} PaperProps={{ sx: { borderRadius: 3.5 } }}>
-        <DialogTitle sx={{ fontWeight: 700, color: 'error.main' }}>Clear Entire LocalStorage?</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 700, color: 'error.main' }}>Leave the current session?</DialogTitle>
         <DialogContent>
           <Typography variant="body2">
             Warning: This action will completely erase all stored vehicles, orders, and sessions. You will be redirected to the login screen.

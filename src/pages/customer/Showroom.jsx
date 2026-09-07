@@ -47,6 +47,7 @@ const Showroom = () => {
   const allCars = useSelector(selectCars);
   const wishlist = useSelector(selectWishlist);
   const cars = allCars.filter(car => car?.status === 'available' && (car?.stock ?? 0) > 0);
+  const favorites = wishlist;
   const [filteredCars, setFilteredCars] = useState([]);
   const [compareList, setCompareList] = useState([]);
   const [compareModalOpen, setCompareModalOpen] = useState(false);
@@ -66,8 +67,6 @@ const Showroom = () => {
   useEffect(() => {
     applyFilters();
   }, [cars, searchTerm, makeFilter, fuelFilter, transmissionFilter, colorFilter, priceRange, sortBy, showOnlyFavorites, favorites]);
-
-  const favorites = wishlist;
 
   const uniqueMakes = [...new Set(cars.map(c => c.make))].filter(Boolean);
 

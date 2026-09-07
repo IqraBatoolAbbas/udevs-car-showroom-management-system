@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import { ArrowBack, Save, DirectionsCar, AttachMoney, TrendingUp, Warning } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
-import * as localStorageService from '../../services/appService';
+import * as appService from '../../services/appService';
 import { validateCarForm } from '../../utils/validators';
 import { calculateProfit, calculateProfitMargin } from '../../utils/calculations';
 import { CAR_STATUS, FUEL_TYPES, TRANSMISSION_TYPES, CAR_COLORS } from '../../utils/constants';
@@ -152,7 +152,7 @@ const AddCar = () => {
       if (isEdit) {
         if (cars.some(c => c.id === id)) {
           dispatch(updateCar({ id, ...carData, updatedAt: new Date().toISOString() }));
-          localStorageService.logActivity({
+          appService.logActivity({
             type: 'update',
             entity: 'car',
             entityId: id,
@@ -160,10 +160,10 @@ const AddCar = () => {
           });
         }
       } else {
-        carData.id = localStorageService.generateId('CAR');
+        carData.id = appService.generateId('CAR');
         carData.createdAt = new Date().toISOString();
         dispatch(addCar(carData));
-        localStorageService.logActivity({
+        appService.logActivity({
           type: 'create',
           entity: 'car',
           entityId: carData.id,

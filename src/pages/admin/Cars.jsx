@@ -40,7 +40,7 @@ import { CAR_STATUS, FUEL_TYPES, TRANSMISSION_TYPES, CAR_COLORS, ROLES } from '.
 import { selectAuthUser } from '../../redux/auth/authSlice';
 import { selectCars, removeCar } from '../../redux/cars/carsSlice';
 import { selectSuppliers } from '../../redux/suppliers/suppliersSlice';
-import * as localStorageService from '../../services/appService';
+import * as appService from '../../services/appService';
 
 const Cars = () => {
   const navigate = useNavigate();
@@ -149,7 +149,7 @@ const Cars = () => {
   const handleDeleteConfirm = () => {
     if (deleteDialog.car) {
       dispatch(removeCar(deleteDialog.car.id));
-      localStorageService.logActivity({
+      appService.logActivity({
         type: 'delete',
         entity: 'car',
         entityId: deleteDialog.car.id,
@@ -474,7 +474,7 @@ const Cars = () => {
         onClose={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
         title="Confirm Vehicle Deletion"
-        message={`Are you sure you want to permanently delete "${deleteDialog.car ? formatCarName(deleteDialog.car) : ''}" (${deleteDialog.car?.id})? This will update LocalStorage instantly.`}
+        message={`Are you sure you want to permanently delete "${deleteDialog.car ? formatCarName(deleteDialog.car) : ''}" (${deleteDialog.car?.id})? This will permanently remove it from the showroom database.`}
       />
     </Box>
   );
