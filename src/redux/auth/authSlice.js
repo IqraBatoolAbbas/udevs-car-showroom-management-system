@@ -1,22 +1,45 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
 import api from '../../api/axios';
 
 const userFromResponse = response => response.data?.data?.user || response.data?.data;
 
-export const login = createAsyncThunk('auth/login', async (credentials, { rejectWithValue }) => {
-  try {
-    return userFromResponse(await api.post('/auth/login', credentials));
-  } catch (error) {
-    return rejectWithValue(error.response?.data?.message || 'Unable to sign in');
-  }
+const toSession = (account) => ({
+  id: account.id,
+  email: account.email,
+  name: account.name,
+  role: account.role,
+  status: account.status,
+  token: account.token
 });
 
-export const register = createAsyncThunk('auth/register', async (payload, { rejectWithValue }) => {
-  try {
-    return userFromResponse(await api.post('/auth/register', payload));
-  } catch (error) {
-    return rejectWithValue(error.response?.data?.message || 'Unable to register');
+export const login = createAsyncThunk('auth/login', async ({ email, password }, { getState, rejectWithValue }) => {
+  if (import.meta.env.VITE_API_URL) {
+    try {
+      const response = await api.post('/auth/login', { email, password });
+      const payload = response.data.data;
+      const currentSession = toSession({ ...payload.user, token: payload.token });
+      localStorageService.setData(STORAGE_KEYS.SESSION, currentSession);
+      return currentSession;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Unable to sign in');
+    }
   }
+  const users = getState().users?.users?.length
+    ? getState().users.users
+    : localStorageService.getData(STORAGE_KEYS.USERS, []);
+  const account = users.find(user => user.email?.toLowerCase() === email.trim().toLowerCase() && user.password === password);
+  if (!account) return rejectWithValue('Invalid email or password');
+  if (account.status !== 'active') return rejectWithValue('This account is inactive. Please contact an administrator.');
+  const currentSession = toSession(account);
+  localStorageService.setData(STORAGE_KEYS.SESSION, currentSession);
+  localStorageService.logActivity({
+    type: 'login',
+    entity: 'user',
+    entityId: account.id,
+    description: `User ${account.email} logged in`
+  });
+  return currentSession;
 });
 
 export const restoreSession = createAsyncThunk('auth/restoreSession', async (_, { rejectWithValue }) => {
