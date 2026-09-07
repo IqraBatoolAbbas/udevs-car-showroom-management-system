@@ -27,6 +27,7 @@ import {
 
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { login } from "../../redux/auth/authSlice";
 import "./Login.css";
 
@@ -498,6 +499,9 @@ const Login = () => {
 
 
               <div className="login-footer">
+                <Typography variant="body2" sx={{ mt: 2, textAlign: 'center' }}>
+                  New customer? <Link to="/signup">Create a customer account</Link>
+                </Typography>
 
                 <span>
                   UDEVS CAR SHOWROOM MANAGEMENT SYSTEM

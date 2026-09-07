@@ -11,6 +11,7 @@ import { setSuppliers } from './redux/suppliers/suppliersSlice';
 import { setCustomers } from './redux/customers/customersSlice';
 import { setApplications } from './redux/applications/applicationsSlice';
 import { setNotifications } from './redux/notifications/notificationsSlice';
+import { ROLES } from './utils/constants';
 
 const AppContent = () => {
   const mode = useSelector(selectThemeMode);
@@ -32,10 +33,13 @@ function App() {
 
   useEffect(() => {
     if (!loading && user) {
-      const resources = [
-        ['cars', setCars], ['suppliers', setSuppliers], ['customers', setCustomers],
-        ['applications', setApplications], ['notifications', setNotifications]
-      ];
+      const resources = [['cars', setCars]];
+      if (user.role === ROLES.ADMIN || user.role === ROLES.INVENTORY) resources.push(['suppliers', setSuppliers]);
+      if (user.role === ROLES.ADMIN || user.role === ROLES.SALES) resources.push(['customers', setCustomers]);
+      if (user.role === ROLES.ADMIN || user.role === ROLES.SALES || user.role === ROLES.CUSTOMER) {
+        resources.push(['applications', setApplications]);
+      }
+      if (user.role === ROLES.ADMIN) resources.push(['notifications', setNotifications]);
       resources.forEach(([resource, hydrate]) => {
         dispatch(fetchCollection({ resource })).unwrap()
           .then(({ result }) => dispatch(hydrate(Array.isArray(result) ? result : result.rows || [])))

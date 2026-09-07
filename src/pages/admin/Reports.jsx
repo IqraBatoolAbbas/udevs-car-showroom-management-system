@@ -39,6 +39,7 @@ import { selectApplications } from '../../redux/applications/applicationsSlice';
 import { selectCustomers } from '../../redux/customers/customersSlice';
 import { formatCurrency, formatCarName, formatRelativeTime } from '../../utils/formatters';
 import { calculateInventoryStats, calculateApplicationStats, calculateTotalProfit } from '../../utils/calculations';
+import { ROLES } from '../../utils/constants';
 import './Reports.css';
 
 const Reports = () => {
@@ -57,17 +58,25 @@ const Reports = () => {
   const suppliersFromStore = useSelector(selectSuppliers);
   const applicationsFromStore = useSelector(selectApplications);
   const customersFromStore = useSelector(selectCustomers);
+  const user = useSelector(state => state.auth.user);
 
   useEffect(() => {
     loadReportData();
-  }, [carsFromStore, suppliersFromStore, applicationsFromStore, customersFromStore]);
+  }, [carsFromStore, suppliersFromStore, applicationsFromStore, customersFromStore, user?.role]);
 
   const loadReportData = async () => {
     const carsData = carsFromStore;
     const appsData = applicationsFromStore;
     const custData = customersFromStore;
-    const logsResult = await activityLogsApi.list({ limit: 100 });
-    const logsData = Array.isArray(logsResult) ? logsResult : logsResult.rows || [];
+    let logsData = [];
+    if (user?.role === ROLES.ADMIN) {
+      try {
+        const logsResult = await activityLogsApi.list({ limit: 100 });
+        logsData = Array.isArray(logsResult) ? logsResult : logsResult.rows || [];
+      } catch (error) {
+        console.error('Unable to load activity logs for report', error);
+      }
+    }
     const supData = suppliersFromStore;
 
     const inventoryStats = calculateInventoryStats(carsData);

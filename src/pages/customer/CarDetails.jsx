@@ -41,6 +41,7 @@ import * as appService from '../../services/appService';
 import { selectAuthUser } from '../../redux/auth/authSlice';
 import { selectCars, selectWishlist, toggleWishlist } from '../../redux/cars/carsSlice';
 import { addApplication } from '../../redux/applications/applicationsSlice';
+import { createRecord } from '../../redux/showroom/showroomSlice';
 import { selectCustomers, addCustomer, updateCustomer } from '../../redux/customers/customersSlice';
 import { addNotification } from '../../redux/notifications/notificationsSlice';
 import { formatCurrency, formatCarName } from '../../utils/formatters';
@@ -126,7 +127,7 @@ const CarDetails = () => {
     setApplyModalOpen(true);
   };
 
-  const handleApplySubmit = (e) => {
+  const handleApplySubmit = async (e) => {
     e.preventDefault();
     setFormErrors({});
 
@@ -176,7 +177,11 @@ const CarDetails = () => {
         updatedAt: new Date().toISOString()
       };
 
-      dispatch(addApplication(newApplication));
+      const savedApplication = await dispatch(createRecord({
+        resource: 'applications',
+        payload: newApplication
+      })).unwrap();
+      dispatch(addApplication(savedApplication));
 
       // Keep the customer master in sync with applications created in the portal.
       const customerRecord = {

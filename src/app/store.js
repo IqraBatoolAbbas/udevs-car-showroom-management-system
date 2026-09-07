@@ -9,7 +9,6 @@ import applicationsReducer from '../redux/applications/applicationsSlice';
 import notificationsReducer from '../redux/notifications/notificationsSlice';
 import settingsReducer from '../redux/settings/settingsSlice';
 import showroomReducer from '../redux/showroom/showroomSlice';
-import localStorageService, { STORAGE_KEYS } from '../services/localStorageService';
 
 export const store = configureStore({
   reducer: {
@@ -23,20 +22,5 @@ export const store = configureStore({
     notifications: notificationsReducer,
     settings: settingsReducer,
     showroom: showroomReducer
-  },
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(() => next => action => {
-    const result = next(action);
-    if (typeof action.type !== 'string') return result;
-    const state = store.getState();
-    if (action.type.startsWith('users/')) localStorageService.setData(STORAGE_KEYS.USERS, state.users.users);
-    if (action.type.startsWith('cars/')) {
-      localStorageService.setData(STORAGE_KEYS.CARS, state.cars.items);
-      localStorageService.setData(STORAGE_KEYS.WISHLIST, state.cars.wishlist);
-    }
-    if (action.type.startsWith('suppliers/')) localStorageService.setData(STORAGE_KEYS.SUPPLIERS, state.suppliers.items);
-    if (action.type.startsWith('customers/')) localStorageService.setData(STORAGE_KEYS.CUSTOMERS, state.customers.items);
-    if (action.type.startsWith('applications/')) localStorageService.setData(STORAGE_KEYS.APPLICATIONS, state.applications.items);
-    if (action.type.startsWith('notifications/')) localStorageService.setData(STORAGE_KEYS.NOTIFICATIONS, state.notifications.items);
-    return result;
-  })
+  }
 });
