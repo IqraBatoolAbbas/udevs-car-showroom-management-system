@@ -42,7 +42,7 @@ const CarDetailsAdmin = () => {
   const user = useSelector(selectAuthUser);
 
   const cars = useSelector(selectCars);
-  const car = cars.find(c => c.id === id);
+  const car = cars.find(c => String(c.id) === String(id));
   const [selectedImage, setSelectedImage] = useState('');
   const canEditVehicle = user?.role === ROLES.ADMIN || user?.role === ROLES.INVENTORY;
 

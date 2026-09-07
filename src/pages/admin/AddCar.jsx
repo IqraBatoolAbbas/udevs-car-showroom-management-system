@@ -51,7 +51,7 @@ const AddCar = () => {
     transmission: 'Automatic',
     mileage: 0,
     engine: '1800cc',
-    images: ['/udevs-car-showroom-management-system/images/car1.jpg'],
+    images: ['/images/car1.jpg'],
     description: '',
     status: CAR_STATUS.AVAILABLE,
     supplierId: ''
@@ -458,7 +458,7 @@ const AddCar = () => {
                     label={`Image URL #${index + 1}`}
                     value={image}
                     onChange={(e) => handleImageChange(index, e.target.value)}
-                    placeholder="/udevs-car-showroom-management-system/images/car1.jpg"
+                    placeholder="/images/car1.jpg"
                   />
                   {formData.images.length > 1 && (
                     <Button
