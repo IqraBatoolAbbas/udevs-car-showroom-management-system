@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import Login from '../pages/auth/Login';
+import Signup from '../pages/auth/Signup';
 import Home from '../pages/home/Home';
 import ProtectedRoute from './ProtectedRoute';
 import RoleRoute from './RoleRoute';
@@ -58,11 +59,13 @@ const AppRoutes = () => {
   return (
     <BrowserRouter
       basename={import.meta.env.BASE_URL.replace(/\/$/, '')}
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
     >
       <Routes>
           {/* Public Login Route */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           
           {/* Admin Routes (Full Access) */}
           <Route 

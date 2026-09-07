@@ -28,7 +28,8 @@ import {
 import { PersonAdd, Email, Phone, LocationOn, Close, Download, Search, Assignment, Person } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
 import * as appService from '../../services/appService';
-import { selectCustomers, addCustomer } from '../../redux/customers/customersSlice';
+import { selectCustomers } from '../../redux/customers/customersSlice';
+import { createRecord } from '../../redux/showroom/showroomSlice';
 import { selectApplications } from '../../redux/applications/applicationsSlice';
 import { validateCustomerForm } from '../../utils/validators';
 import { PAKISTAN_CITIES } from '../../utils/constants';
@@ -93,7 +94,9 @@ const Customers = () => {
       createdAt: new Date().toISOString()
     };
 
-    dispatch(addCustomer(newCustomer));
+    dispatch(createRecord({ resource: 'customers', payload: newCustomer }))
+      .unwrap()
+      .catch(error => setErrors({ submit: error.message || 'Unable to create customer' }));
     appService.logActivity({
       type: 'create',
       entity: 'customer',
