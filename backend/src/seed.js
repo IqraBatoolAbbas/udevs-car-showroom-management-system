@@ -9,14 +9,15 @@ const accounts = [
   ['USR_CUST001', 'customer@udevs.com', 'Customer@123', 'John Doe', 'customer']
 ];
 
-(async () => {
+const seedDemoData = async () => {
   await sequelize.authenticate();
   await sequelize.sync();
   for (const [id, email, password, name, role] of accounts) {
-    await User.findOrCreate({
+    const [user] = await User.findOrCreate({
       where: { email },
       defaults: { id, email, password: await bcrypt.hash(password, 12), name, role, status: 'active' }
     });
+    await user.update({ status: 'active', role, name });
   }
   const [supplier] = await Supplier.findOrCreate({
     where: { id: 'SUP_TOYOTA001' },
@@ -67,6 +68,13 @@ const accounts = [
     where: { key: 'system' },
     defaults: { value: { showroomName: 'U Devs Car Showroom', currency: 'PKR', lowStockThreshold: 3, enableNotifications: true } }
   });
-  console.log('Demo accounts seeded');
-  await sequelize.close();
-})().catch(error => { console.error(error); process.exit(1); });
+  console.log('Demo accounts and showroom inventory seeded');
+};
+
+if (require.main === module) {
+  seedDemoData()
+    .then(() => sequelize.close())
+    .catch(error => { console.error(error); process.exit(1); });
+}
+
+module.exports = seedDemoData;
