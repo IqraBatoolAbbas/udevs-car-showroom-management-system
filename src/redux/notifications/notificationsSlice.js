@@ -1,9 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
 
 const notificationsSlice = createSlice({
   name: 'notifications',
-  initialState: { items: localStorageService.getData(STORAGE_KEYS.NOTIFICATIONS, []) },
+  initialState: { items: [] },
   reducers: {
     setNotifications: (state, action) => { state.items = action.payload || []; },
     addNotification: (state, action) => { state.items.unshift(action.payload); },
@@ -25,4 +24,3 @@ export const {
 } = notificationsSlice.actions;
 export const selectNotifications = state => state.notifications.items;
 export default notificationsSlice.reducer;
-

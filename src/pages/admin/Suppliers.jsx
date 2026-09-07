@@ -39,7 +39,7 @@ import { maskSensitive } from '../../utils/formatters';
 import { selectAuthUser } from '../../redux/auth/authSlice';
 import { selectSuppliers, removeSupplier } from '../../redux/suppliers/suppliersSlice';
 import { selectCars } from '../../redux/cars/carsSlice';
-import localStorageService from '../../services/localStorageService';
+import * as localStorageService from '../../services/appService';
 import { ROLES } from '../../utils/constants';
 
 const Suppliers = () => {

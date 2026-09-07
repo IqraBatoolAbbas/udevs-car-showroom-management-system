@@ -2,9 +2,9 @@
 
 A full-stack **Car Showroom Management System** developed using React.js, Redux Toolkit, Express, Sequelize and PostgreSQL as part of the **U Devs Internship Assignment**.
 
-The system provides separate interfaces and role-based access for **Admin, Sales, Inventory, and Customer** users. It includes car inventory management, supplier management, customer management, applications, dashboards, role-based access control, automatic calculations, and LocalStorage-based data persistence.
+The system provides separate interfaces and role-based access for **Admin, Sales, Inventory, and Customer** users. It includes car inventory management, supplier management, customer management, applications, dashboards, role-based access control, automatic calculations, and PostgreSQL-backed persistence.
 
-> The frontend still supports an offline LocalStorage demo when `VITE_API_URL` is not configured. For full-stack development, run the backend and PostgreSQL setup below.
+> The frontend requires the Express API and PostgreSQL setup below.
 
 ---
 
@@ -120,7 +120,7 @@ The application includes:
 - LocalStorage data persistence
 - Responsive user interface
 
-The core showroom demo remains runnable without a backend. When `VITE_API_URL` is available, JWT authentication and the server-backed API layer are used for users, cars, suppliers, customers, applications, notifications, activity logs and settings.
+JWT authentication and the server-backed API layer are used for users, cars, suppliers, customers, applications, notifications, activity logs and settings.
 
 ## Full-stack backend
 
@@ -151,7 +151,7 @@ The admin User Control page uses a production-style Redux Toolkit flow:
 
 `Users page/components -> async thunk -> Axios user API service -> user reducer -> UI`
 
-It supports fetching, creating, updating, and safely deleting users, with validation for required fields, email format, duplicate email addresses, roles, statuses, loading states, API errors, empty results, and last-administrator protection. Existing LocalStorage data is used as a development fallback when `VITE_API_URL` is not configured, so the frontend remains runnable without a backend.
+It supports fetching, creating, updating, and safely deleting users, with validation for required fields, email format, duplicate email addresses, roles, statuses, loading states, API errors, empty results, and last-administrator protection. The frontend requires the configured REST API and does not use a browser persistence fallback.
 
 To connect the module to the group backend, copy `.env.example` to `.env` and set:
 
@@ -222,7 +222,7 @@ The API adapter uses `GET /users`, `POST /users`, `PUT /users` (with `id` in the
 | Axios | User API requests |
 | React Router DOM | Application routing |
 | CSS | Responsive layouts and dark-mode styling |
-| LocalStorage | Client-side data persistence |
+| PostgreSQL | Server-side data persistence |
 | Vite 8.2.2 | Development and build tool |
 
 ---

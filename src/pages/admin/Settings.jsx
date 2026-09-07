@@ -27,8 +27,7 @@ import {
   RestartAlt
 } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
-import seedInitialData from '../../data/seedData';
+import { logActivity } from '../../services/appService';
 import './Settings.css';
 import { selectSettings, updateSettings } from '../../redux/settings/settingsSlice';
 import { selectCars } from '../../redux/cars/carsSlice';
@@ -60,7 +59,7 @@ const Settings = () => {
 
   const handleSaveSettings = () => {
     dispatch(updateSettings(settings));
-    localStorageService.logActivity({
+    logActivity({
       type: 'update',
       entity: 'settings',
       entityId: 'SYSTEM',
@@ -71,25 +70,17 @@ const Settings = () => {
   };
 
   const handleClearAllData = () => {
-    localStorage.clear();
     setClearDataDialog(false);
     window.location.href = '/login';
   };
 
   const handleReseedData = () => {
-    localStorage.clear();
-    seedInitialData();
     setReseedDialog(false);
-    window.location.reload();
+    setShowSuccess(true);
   };
 
   const getStorageInfo = () => {
-    let totalSize = 0;
-    Object.values(STORAGE_KEYS).forEach(key => {
-      const data = localStorage.getItem(key);
-      if (data) totalSize += data.length;
-    });
-    return (totalSize / 1024).toFixed(2) + ' KB';
+    return 'Server database';
   };
 
   return (

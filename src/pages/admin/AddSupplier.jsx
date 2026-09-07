@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { ArrowBack, Save, Business, ContactPhone } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
-import localStorageService from '../../services/localStorageService';
+import * as localStorageService from '../../services/appService';
 import { validateSupplierForm } from '../../utils/validators';
 import { SUPPLIER_STATUS, PAKISTAN_CITIES, ROLES } from '../../utils/constants';
 import { selectAuthUser } from '../../redux/auth/authSlice';

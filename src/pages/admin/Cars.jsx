@@ -40,7 +40,7 @@ import { CAR_STATUS, FUEL_TYPES, TRANSMISSION_TYPES, CAR_COLORS, ROLES } from '.
 import { selectAuthUser } from '../../redux/auth/authSlice';
 import { selectCars, removeCar } from '../../redux/cars/carsSlice';
 import { selectSuppliers } from '../../redux/suppliers/suppliersSlice';
-import localStorageService from '../../services/localStorageService';
+import * as localStorageService from '../../services/appService';
 
 const Cars = () => {
   const navigate = useNavigate();

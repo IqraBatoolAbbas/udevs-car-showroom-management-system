@@ -17,6 +17,9 @@ const createUser = async (req, res) => {
   res.status(201).json({ success: true, message: 'User created', data: safeUser(user) });
 };
 const updateUser = async (req, res) => {
+  if (req.user.role !== 'admin' && req.body.id !== req.userId) {
+    return res.status(403).json({ success: false, message: 'You can only update your own profile' });
+  }
   const user = await User.findByPk(req.body.id);
   if (!user) return res.status(404).json({ success: false, message: 'User not found' });
   const updates = { ...req.body };

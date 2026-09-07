@@ -1,9 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
 
 const customersSlice = createSlice({
   name: 'customers',
-  initialState: { items: localStorageService.getData(STORAGE_KEYS.CUSTOMERS, []) },
+  initialState: { items: [] },
   reducers: {
     setCustomers: (state, action) => { state.items = action.payload || []; },
     addCustomer: (state, action) => { state.items.push(action.payload); },
@@ -18,4 +17,3 @@ const customersSlice = createSlice({
 export const { setCustomers, addCustomer, updateCustomer, removeCustomer } = customersSlice.actions;
 export const selectCustomers = state => state.customers.items;
 export default customersSlice.reducer;
-

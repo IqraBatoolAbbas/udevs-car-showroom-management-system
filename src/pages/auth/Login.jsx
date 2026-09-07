@@ -134,7 +134,7 @@ const Login = () => {
       navigate(destinations[result.role] || '/');
     } catch (err) {
       console.error(err);
-      setError("An error occurred during login.");
+      setError(typeof err === 'string' ? err : "An error occurred during login.");
     } finally {
       setLoading(false);
     }

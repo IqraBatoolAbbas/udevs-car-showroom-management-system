@@ -8,6 +8,12 @@ const issueToken = (user) => jwt.sign(
   process.env.JWT_SECRET,
   { expiresIn: process.env.JWT_EXPIRES_IN || '1d' }
 );
+const authCookie = token => ({
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  maxAge: 24 * 60 * 60 * 1000
+});
 
 const register = async (req, res) => {
   const { name, email, password, role = 'customer', ...profile } = req.body;
@@ -18,7 +24,9 @@ const register = async (req, res) => {
     id: `USR_${Date.now()}`, name: name.trim(), email: normalizedEmail,
     password: await bcrypt.hash(password, 12), role: role === 'customer' ? 'customer' : 'customer', ...profile
   });
-  res.status(201).json({ success: true, message: 'Registration successful', data: { user: safeUser(user), token: issueToken(user) } });
+  const token = issueToken(user);
+  res.cookie('access_token', token, authCookie(token));
+  res.status(201).json({ success: true, message: 'Registration successful', data: { user: safeUser(user) } });
 };
 
 const login = async (req, res) => {
@@ -27,7 +35,9 @@ const login = async (req, res) => {
     return res.status(401).json({ success: false, message: 'Invalid email or password' });
   }
   if (user.status !== 'active') return res.status(403).json({ success: false, message: 'This account is inactive' });
-  res.json({ success: true, message: 'Login successful', data: { user: safeUser(user), token: issueToken(user) } });
+  const token = issueToken(user);
+  res.cookie('access_token', token, authCookie(token));
+  res.json({ success: true, message: 'Login successful', data: { user: safeUser(user) } });
 };
 
 const me = async (req, res) => {

@@ -9,7 +9,30 @@ import applicationsReducer from '../redux/applications/applicationsSlice';
 import notificationsReducer from '../redux/notifications/notificationsSlice';
 import settingsReducer from '../redux/settings/settingsSlice';
 import showroomReducer from '../redux/showroom/showroomSlice';
-import localStorageService, { STORAGE_KEYS } from '../services/localStorageService';
+import { carsApi, suppliersApi, customersApi, applicationsApi, notificationsApi, settingsApi } from '../services/showroomApi';
+
+const apiSyncMiddleware = () => next => action => {
+  const result = next(action);
+  const payload = action.payload;
+  const sync = promise => promise.catch(error => console.error('API synchronization failed', error));
+  if (action.type === 'cars/addCar') sync(carsApi.create(payload));
+  if (action.type === 'cars/updateCar') sync(carsApi.update(payload.id, payload));
+  if (action.type === 'cars/removeCar') sync(carsApi.remove(payload));
+  if (action.type === 'suppliers/addSupplier') sync(suppliersApi.create(payload));
+  if (action.type === 'suppliers/updateSupplier') sync(suppliersApi.update(payload.id, payload));
+  if (action.type === 'suppliers/removeSupplier') sync(suppliersApi.remove(payload));
+  if (action.type === 'customers/addCustomer') sync(customersApi.create(payload));
+  if (action.type === 'customers/updateCustomer') sync(customersApi.update(payload.id, payload));
+  if (action.type === 'customers/removeCustomer') sync(customersApi.remove(payload));
+  if (action.type === 'applications/addApplication') sync(applicationsApi.create(payload));
+  if (action.type === 'applications/updateApplication') sync(applicationsApi.update(payload.id, payload));
+  if (action.type === 'applications/removeApplication') sync(applicationsApi.remove(payload));
+  if (action.type === 'notifications/addNotification') sync(notificationsApi.create(payload));
+  if (action.type === 'notifications/markNotificationRead') sync(notificationsApi.update(payload, { read: true }));
+  if (action.type === 'notifications/removeNotification') sync(notificationsApi.remove(payload));
+  if (action.type === 'settings/updateSettings') sync(settingsApi.update('system', { value: payload }).catch(() => settingsApi.create({ key: 'system', value: payload })));
+  return result;
+};
 
 export const store = configureStore({
   reducer: {
@@ -24,19 +47,5 @@ export const store = configureStore({
     settings: settingsReducer,
     showroom: showroomReducer
   },
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(() => next => action => {
-    const result = next(action);
-    if (typeof action.type !== 'string') return result;
-    const state = store.getState();
-    if (action.type.startsWith('users/')) localStorageService.setData(STORAGE_KEYS.USERS, state.users.users);
-    if (action.type.startsWith('cars/')) {
-      localStorageService.setData(STORAGE_KEYS.CARS, state.cars.items);
-      localStorageService.setData(STORAGE_KEYS.WISHLIST, state.cars.wishlist);
-    }
-    if (action.type.startsWith('suppliers/')) localStorageService.setData(STORAGE_KEYS.SUPPLIERS, state.suppliers.items);
-    if (action.type.startsWith('customers/')) localStorageService.setData(STORAGE_KEYS.CUSTOMERS, state.customers.items);
-    if (action.type.startsWith('applications/')) localStorageService.setData(STORAGE_KEYS.APPLICATIONS, state.applications.items);
-    if (action.type.startsWith('notifications/')) localStorageService.setData(STORAGE_KEYS.NOTIFICATIONS, state.notifications.items);
-    return result;
-  })
+  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(apiSyncMiddleware)
 });

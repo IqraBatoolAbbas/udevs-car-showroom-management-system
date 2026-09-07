@@ -30,7 +30,7 @@ import { Assignment, Download, Search, Edit, History, Close } from '@mui/icons-m
 import PageHeader from '../../components/common/PageHeader';
 import ApplicationStatus from '../../components/applications/ApplicationStatus';
 import EmptyState from '../../components/common/EmptyState';
-import localStorageService from '../../services/localStorageService';
+import * as localStorageService from '../../services/appService';
 import { selectApplications, updateApplication } from '../../redux/applications/applicationsSlice';
 import { selectCars } from '../../redux/cars/carsSlice';
 import { addNotification } from '../../redux/notifications/notificationsSlice';

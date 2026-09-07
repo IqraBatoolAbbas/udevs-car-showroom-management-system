@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import { ArrowBack, Save, DirectionsCar, AttachMoney, TrendingUp, Warning } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
-import localStorageService from '../../services/localStorageService';
+import * as localStorageService from '../../services/appService';
 import { validateCarForm } from '../../utils/validators';
 import { calculateProfit, calculateProfitMargin } from '../../utils/calculations';
 import { CAR_STATUS, FUEL_TYPES, TRANSMISSION_TYPES, CAR_COLORS } from '../../utils/constants';

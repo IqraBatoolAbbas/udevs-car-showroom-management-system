@@ -37,7 +37,7 @@ import {
 } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
 import StatusChip from '../../components/common/StatusChip';
-import localStorageService from '../../services/localStorageService';
+import * as localStorageService from '../../services/appService';
 import { selectAuthUser } from '../../redux/auth/authSlice';
 import { selectCars, selectWishlist, toggleWishlist } from '../../redux/cars/carsSlice';
 import { addApplication } from '../../redux/applications/applicationsSlice';
