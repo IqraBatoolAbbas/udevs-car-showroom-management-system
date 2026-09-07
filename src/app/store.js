@@ -8,6 +8,7 @@ import customersReducer from '../redux/customers/customersSlice';
 import applicationsReducer from '../redux/applications/applicationsSlice';
 import notificationsReducer from '../redux/notifications/notificationsSlice';
 import settingsReducer from '../redux/settings/settingsSlice';
+import showroomReducer from '../redux/showroom/showroomSlice';
 import localStorageService, { STORAGE_KEYS } from '../services/localStorageService';
 
 export const store = configureStore({
@@ -20,10 +21,12 @@ export const store = configureStore({
     customers: customersReducer,
     applications: applicationsReducer,
     notifications: notificationsReducer,
-    settings: settingsReducer
+    settings: settingsReducer,
+    showroom: showroomReducer
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware().concat(() => next => action => {
     const result = next(action);
+    if (typeof action.type !== 'string') return result;
     const state = store.getState();
     if (action.type.startsWith('users/')) localStorageService.setData(STORAGE_KEYS.USERS, state.users.users);
     if (action.type.startsWith('cars/')) {
