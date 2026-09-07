@@ -23,15 +23,16 @@ const seedDemoData = async () => {
     where: { id: 'SUP_TOYOTA001' },
     defaults: { companyName: 'Toyota Indus Motor Company', contactPerson: 'Ahmed Khan', city: 'Karachi', status: 'active' }
   });
-  await Car.findOrCreate({
+  const [primaryCar] = await Car.findOrCreate({
     where: { id: 'CAR_TOYOTA001' },
     defaults: {
       make: 'Toyota', model: 'Corolla', year: 2025, variant: 'Grande', purchaseRate: 6500000,
       sellingPrice: 7250000, profit: 750000, profitMargin: 10.34, availableColors: ['White', 'Black', 'Silver'],
       stock: 5, fuel: 'Petrol', transmission: 'Automatic', mileage: 0, engine: '1800cc',
-      images: [], description: 'Premium sedan with advanced features.', status: 'available', supplierId: supplier.id
+      images: ['/images/pic1.png', '/images/pic2.png'], description: 'Premium sedan with advanced features.', status: 'available', supplierId: supplier.id
     }
   });
+  await primaryCar.update({ status: 'available', stock: 5, images: ['/images/pic1.png', '/images/pic2.png'] });
   const showroomCars = [
     ['CAR_TOYOTA002', 'Toyota', 'Yaris', 'Ativ', 4300000, 7, '1300cc', 'Petrol'],
     ['CAR_HONDA001', 'Honda', 'Civic', 'Turbo', 9500000, 3, '1500cc Turbo', 'Petrol'],
@@ -40,17 +41,18 @@ const seedDemoData = async () => {
     ['CAR_HYUNDAI001', 'Hyundai', 'Elantra', 'GLS', 6200000, 4, '1600cc', 'Petrol'],
     ['CAR_HYUNDAI002', 'Hyundai', 'Tucson', 'FWD', 8500000, 2, '2000cc', 'Petrol']
   ];
-  for (const [id, make, model, variant, sellingPrice, stock, engine, fuel] of showroomCars) {
-    await Car.findOrCreate({
+  for (const [index, [id, make, model, variant, sellingPrice, stock, engine, fuel]] of showroomCars.entries()) {
+    const [car] = await Car.findOrCreate({
       where: { id },
       defaults: {
         make, model, variant, year: 2025, purchaseRate: Math.round(sellingPrice * 0.9),
         sellingPrice, profit: Math.round(sellingPrice * 0.1), profitMargin: 10,
         availableColors: ['White', 'Black', 'Silver', 'Red'], stock, fuel, transmission: 'Automatic',
-        mileage: 0, engine, images: [], description: `${make} ${model} ${variant} - showroom vehicle with verified specifications.`,
+        mileage: 0, engine, images: [`/images/pic${index + 1}.png`, `/images/pic${(index + 2) % 7 + 1}.png`], description: `${make} ${model} ${variant} - showroom vehicle with verified specifications.`,
         status: 'available', supplierId: supplier.id
       }
     });
+    await car.update({ status: 'available', stock, images: [`/images/pic${index + 1}.png`, `/images/pic${(index + 2) % 7 + 1}.png`] });
   }
   const [customer] = await Customer.findOrCreate({
     where: { id: 'CUST_001' },

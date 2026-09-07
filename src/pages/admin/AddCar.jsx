@@ -51,7 +51,7 @@ const AddCar = () => {
     transmission: 'Automatic',
     mileage: 0,
     engine: '1800cc',
-    images: ['https://images.unsplash.com/photo-1623869675781-80aa31012a5a?w=800'],
+    images: ['/images/pic1.png'],
     description: '',
     status: CAR_STATUS.AVAILABLE,
     supplierId: ''
@@ -458,7 +458,7 @@ const AddCar = () => {
                     label={`Image URL #${index + 1}`}
                     value={image}
                     onChange={(e) => handleImageChange(index, e.target.value)}
-                    placeholder="https://images.unsplash.com/..."
+                    placeholder="/images/pic1.png"
                   />
                   {formData.images.length > 1 && (
                     <Button
@@ -576,7 +576,7 @@ const AddCar = () => {
                   component="img"
                   src={formData.images[0]}
                   alt="Vehicle Preview"
-                  onError={(e) => { e.target.src = 'https://via.placeholder.com/400x250?text=Invalid+Image+URL'; }}
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   sx={{ width: '100%', height: 180, objectFit: 'cover', borderRadius: 2 }}
                 />
               </Paper>

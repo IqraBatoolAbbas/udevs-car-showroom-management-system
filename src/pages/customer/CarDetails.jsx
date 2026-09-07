@@ -47,6 +47,7 @@ import { formatCurrency, formatCarName } from '../../utils/formatters';
 import { validateApplicationForm } from '../../utils/validators';
 import { PAKISTAN_CITIES, ROLES } from '../../utils/constants';
 import './CarDetails.css';
+import { getCarImages } from '../../utils/carImages';
 
 const CarDetails = () => {
   const { id } = useParams();
@@ -83,7 +84,7 @@ const CarDetails = () => {
       const availableColors = Array.isArray(foundCar.availableColors) ? foundCar.availableColors : [];
       const activeColor = availableColors[0] || 'White';
       setCar(foundCar);
-      setSelectedImage(foundCar.images?.[0] || '');
+      setSelectedImage(getCarImages(foundCar)[0]);
       setSelectedColor(activeColor);
     }
   }, [id, cars]);
@@ -295,7 +296,7 @@ const CarDetails = () => {
             <Box sx={{ position: 'relative', mb: 2, borderRadius: 2.5, overflow: 'hidden' }}>
               <Box
                 component="img"
-                src={selectedImage || 'https://via.placeholder.com/800x500?text=No+Image'}
+                src={selectedImage || getCarImages(car)[0]}
                 alt={formatCarName(car)}
                 sx={{ width: '100%', height: { xs: 260, sm: 400 }, objectFit: 'cover' }}
               />
@@ -305,9 +306,9 @@ const CarDetails = () => {
             </Box>
 
             {/* Thumbnail Strip */}
-            {car.images?.length > 1 && (
+            {getCarImages(car).length > 1 && (
               <Box sx={{ display: 'flex', gap: 1.5, overflowX: 'auto', pb: 1 }}>
-                {car.images.map((img, idx) => (
+                {getCarImages(car).map((img, idx) => (
                   <Box
                     key={idx}
                     component="img"

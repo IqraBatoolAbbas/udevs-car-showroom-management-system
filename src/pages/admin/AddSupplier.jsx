@@ -50,7 +50,22 @@ const AddSupplier = () => {
   useEffect(() => {
     if (isEdit) {
       const supplier = suppliers.find(item => item.id === id);
-      if (supplier) setFormData(supplier);
+      if (supplier) {
+        setFormData(prev => ({
+          ...prev,
+          ...supplier,
+          companyName: supplier.companyName || '',
+          contactPerson: supplier.contactPerson || '',
+          email: supplier.email || '',
+          phone: supplier.phone || '',
+          address: supplier.address || '',
+          city: supplier.city || 'Lahore',
+          cnic: supplier.cnic || '',
+          ntn: supplier.ntn || '',
+          status: supplier.status || SUPPLIER_STATUS.ACTIVE,
+          notes: supplier.notes || ''
+        }));
+      }
     }
   }, [id, isEdit, suppliers]);
 

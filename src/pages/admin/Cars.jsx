@@ -37,6 +37,7 @@ import ConfirmDialog from '../../components/common/ConfirmDialog';
 import EmptyState from '../../components/common/EmptyState';
 import { formatCurrency, formatCarName } from '../../utils/formatters';
 import { CAR_STATUS, FUEL_TYPES, TRANSMISSION_TYPES, CAR_COLORS, ROLES } from '../../utils/constants';
+import { getCarImage } from '../../utils/carImages';
 import { selectAuthUser } from '../../redux/auth/authSlice';
 import { selectCars, removeCar } from '../../redux/cars/carsSlice';
 import { selectSuppliers } from '../../redux/suppliers/suppliersSlice';
@@ -363,7 +364,7 @@ const Cars = () => {
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <Box
                           component="img"
-                          src={car.images?.[0] || 'https://via.placeholder.com/100x70?text=No+Image'}
+                          src={getCarImage(car)}
                           alt={formatCarName(car)}
                           sx={{ width: 64, height: 48, objectFit: 'cover', borderRadius: 2, border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }}
                         />

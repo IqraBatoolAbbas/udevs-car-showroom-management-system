@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import { Close, DeleteOutline, CompareArrows, CheckCircle } from '@mui/icons-material';
 import { formatCurrency, formatCarName } from '../../utils/formatters';
+import { getCarImage } from '../../utils/carImages';
 
 const CarCompareModal = ({ open, onClose, compareCars = [], onRemoveCar, onSelectCar }) => {
   if (compareCars.length === 0) return null;
@@ -27,7 +28,7 @@ const CarCompareModal = ({ open, onClose, compareCars = [], onRemoveCar, onSelec
       <Box sx={{ textAlign: 'center' }}>
         <Box
           component="img"
-          src={car.images?.[0] || 'https://via.placeholder.com/300x180?text=No+Image'}
+          src={getCarImage(car)}
           alt={formatCarName(car)}
           sx={{ width: '100%', height: 130, objectFit: 'cover', borderRadius: 2, mb: 1, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
         />
