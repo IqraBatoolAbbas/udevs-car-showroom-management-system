@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
+import api from '../../api/axios';
 
 const session = localStorageService.getData(STORAGE_KEYS.SESSION, null);
 
@@ -8,10 +9,22 @@ const toSession = (account) => ({
   email: account.email,
   name: account.name,
   role: account.role,
-  status: account.status
+  status: account.status,
+  token: account.token
 });
 
 export const login = createAsyncThunk('auth/login', async ({ email, password }, { getState, rejectWithValue }) => {
+  if (import.meta.env.VITE_API_URL) {
+    try {
+      const response = await api.post('/auth/login', { email, password });
+      const payload = response.data.data;
+      const currentSession = toSession({ ...payload.user, token: payload.token });
+      localStorageService.setData(STORAGE_KEYS.SESSION, currentSession);
+      return currentSession;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Unable to sign in');
+    }
+  }
   const users = getState().users?.users?.length
     ? getState().users.users
     : localStorageService.getData(STORAGE_KEYS.USERS, []);

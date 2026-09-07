@@ -1,11 +1,10 @@
 # 🚗 UDEVS Car Showroom Management System
 
-A professional frontend-only **Car Showroom Management System** developed using React.js as part of the **U Devs Internship Assignment**.
+A full-stack **Car Showroom Management System** developed using React.js, Redux Toolkit, Express, Sequelize and PostgreSQL as part of the **U Devs Internship Assignment**.
 
 The system provides separate interfaces and role-based access for **Admin, Sales, Inventory, and Customer** users. It includes car inventory management, supplier management, customer management, applications, dashboards, role-based access control, automatic calculations, and LocalStorage-based data persistence.
 
-> **Important Demo Notice:**  
-> This is a frontend-only prototype. All application data, including seeded and created user passwords, is stored in browser LocalStorage in plaintext for demonstration purposes only. This authentication and storage approach must **not** be used in production.
+> The frontend still supports an offline LocalStorage demo when `VITE_API_URL` is not configured. For full-stack development, run the backend and PostgreSQL setup below.
 
 ---
 
@@ -121,7 +120,28 @@ The application includes:
 - LocalStorage data persistence
 - Responsive user interface
 
-The core showroom demo remains runnable without a backend. The User Control module is API-ready and uses the configured backend when `VITE_API_URL` is available, with LocalStorage fallback for local demonstration.
+The core showroom demo remains runnable without a backend. When `VITE_API_URL` is available, JWT authentication and the server-backed API layer are used for users, cars, suppliers, customers, applications, notifications, activity logs and settings.
+
+## Full-stack backend
+
+The `backend/` directory contains the Express API, Sequelize models, PostgreSQL connection, JWT middleware, role authorization, validation, rate limiting, consistent responses and CRUD routes for every showroom entity.
+
+```bash
+cd backend
+npm install
+copy .env.example .env
+# Create the PostgreSQL database named in backend/.env, then:
+npm run seed
+npm run dev
+```
+
+The API health check is `GET http://localhost:5000/api/health`. Configure the frontend with:
+
+```bash
+copy .env.example .env
+```
+
+Demo accounts are seeded by `npm run seed`: `admin@udevs.com`, `sales@udevs.com`, `inventory@udevs.com` and `customer@udevs.com` with their existing demo passwords.
 
 ---
 
@@ -139,7 +159,7 @@ To connect the module to the group backend, copy `.env.example` to `.env` and se
 VITE_API_URL=http://localhost:5000/api
 ```
 
-For the provided backend controller, the adapter uses `GET /user`, `POST /user`, `PUT /user` (with `id` in the JSON body), and `DELETE /user/:id`. It unwraps the backend's `{ data: { users } }` and `{ data: { newUser } }` response shapes and maps backend `userType` values to the existing showroom roles.
+The API adapter uses `GET /users`, `POST /users`, `PUT /users` (with `id` in the JSON body), and `DELETE /users/:id`. It unwraps the consistent API response shape and maps server roles to the existing showroom roles.
 
 ---
 
@@ -563,12 +583,9 @@ Status changes generate relevant notification and activity log entries.
 
 ## ⚠️ Known Limitations
 
-This project is intentionally designed as a frontend-only demonstration.
+The offline mode is intentionally a browser-only demonstration. Full-stack mode uses the backend documented above.
 
-- No backend server
-- No database
-- No real authentication
-- Passwords are stored in LocalStorage for demonstration
+- Offline mode stores demo passwords in LocalStorage and must not be used for production
 - No payment processing
 - No real email or SMS service
 - LocalStorage is device/browser specific
@@ -581,10 +598,6 @@ This project is intentionally designed as a frontend-only demonstration.
 
 Possible future improvements include:
 
-- Node.js / Express backend
-- MongoDB or PostgreSQL database
-- JWT-based authentication
-- Secure password hashing
 - Payment gateway integration
 - Email and SMS notifications
 - Car image upload system
