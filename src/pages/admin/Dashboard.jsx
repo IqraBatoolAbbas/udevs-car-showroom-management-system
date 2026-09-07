@@ -29,7 +29,7 @@ import {
 } from '@mui/icons-material';
 import StatCard from '../../components/common/StatCard';
 import PageHeader from '../../components/common/PageHeader';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
+import { activityLogsApi } from '../../services/showroomApi';
 import { selectCars } from '../../redux/cars/carsSlice';
 import { selectApplications } from '../../redux/applications/applicationsSlice';
 import { selectCustomers } from '../../redux/customers/customersSlice';
@@ -54,8 +54,9 @@ const Dashboard = () => {
 
   
 
-  const loadDashboardData = () => {
-    const activityLogs = localStorageService.getData(STORAGE_KEYS.ACTIVITY_LOGS, []);
+  const loadDashboardData = async () => {
+    const activityResult = await activityLogsApi.list({ limit: 8 });
+    const activityLogs = Array.isArray(activityResult) ? activityResult : activityResult.rows || [];
 
     // Calculate statistics dynamically
     const inventoryStats = calculateInventoryStats(cars);

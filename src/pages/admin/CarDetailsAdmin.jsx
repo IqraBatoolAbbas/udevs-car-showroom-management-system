@@ -33,6 +33,7 @@ import { formatCurrency, formatCarName } from '../../utils/formatters';
 import { selectAuthUser } from '../../redux/auth/authSlice';
 import { selectCars } from '../../redux/cars/carsSlice';
 import { ROLES } from '../../utils/constants';
+import { getCarImages } from '../../utils/carImages';
 import './CarDetailsAdmin.css';
 
 const CarDetailsAdmin = () => {
@@ -41,11 +42,11 @@ const CarDetailsAdmin = () => {
   const user = useSelector(selectAuthUser);
 
   const cars = useSelector(selectCars);
-  const car = cars.find(c => c.id === id);
+  const car = cars.find(c => String(c.id) === String(id));
   const [selectedImage, setSelectedImage] = useState('');
   const canEditVehicle = user?.role === ROLES.ADMIN || user?.role === ROLES.INVENTORY;
 
-  useEffect(() => setSelectedImage(car?.images?.[0] || ''), [car]);
+  useEffect(() => setSelectedImage(car ? getCarImages(car)[0] : ''), [car]);
 
   if (!car) {
     return (
@@ -95,9 +96,9 @@ const CarDetailsAdmin = () => {
                 sx={{ height: 400, objectFit: 'cover' }}
               />
             </Card>
-            {car.images && car.images.length > 1 && (
+            {getCarImages(car).length > 1 && (
               <Box sx={{ display: 'flex', gap: 1, mt: 2, overflowX: 'auto', pb: 1 }}>
-                {car.images.map((img, idx) => (
+                {getCarImages(car).map((img, idx) => (
                   <Card
                     key={idx}
                     sx={{ 

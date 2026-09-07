@@ -1,4 +1,3 @@
-import { STORAGE_KEYS } from '../services/localStorageService';
 
 const seedCustomers = () => {
   const customers = [

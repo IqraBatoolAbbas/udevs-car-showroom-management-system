@@ -37,10 +37,11 @@ import ConfirmDialog from '../../components/common/ConfirmDialog';
 import EmptyState from '../../components/common/EmptyState';
 import { formatCurrency, formatCarName } from '../../utils/formatters';
 import { CAR_STATUS, FUEL_TYPES, TRANSMISSION_TYPES, CAR_COLORS, ROLES } from '../../utils/constants';
+import { getCarImage } from '../../utils/carImages';
 import { selectAuthUser } from '../../redux/auth/authSlice';
 import { selectCars, removeCar } from '../../redux/cars/carsSlice';
 import { selectSuppliers } from '../../redux/suppliers/suppliersSlice';
-import localStorageService from '../../services/localStorageService';
+import * as appService from '../../services/appService';
 
 const Cars = () => {
   const navigate = useNavigate();
@@ -149,7 +150,7 @@ const Cars = () => {
   const handleDeleteConfirm = () => {
     if (deleteDialog.car) {
       dispatch(removeCar(deleteDialog.car.id));
-      localStorageService.logActivity({
+      appService.logActivity({
         type: 'delete',
         entity: 'car',
         entityId: deleteDialog.car.id,
@@ -363,7 +364,7 @@ const Cars = () => {
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <Box
                           component="img"
-                          src={car.images?.[0] || 'https://via.placeholder.com/100x70?text=No+Image'}
+                          src={getCarImage(car)}
                           alt={formatCarName(car)}
                           sx={{ width: 64, height: 48, objectFit: 'cover', borderRadius: 2, border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }}
                         />
@@ -474,7 +475,7 @@ const Cars = () => {
         onClose={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
         title="Confirm Vehicle Deletion"
-        message={`Are you sure you want to permanently delete "${deleteDialog.car ? formatCarName(deleteDialog.car) : ''}" (${deleteDialog.car?.id})? This will update LocalStorage instantly.`}
+        message={`Are you sure you want to permanently delete "${deleteDialog.car ? formatCarName(deleteDialog.car) : ''}" (${deleteDialog.car?.id})? This will permanently remove it from the showroom database.`}
       />
     </Box>
   );

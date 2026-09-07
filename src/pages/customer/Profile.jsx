@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { Person, Security, Save, Assignment, CheckCircle } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
-import localStorageService from '../../services/localStorageService';
+import * as appService from '../../services/appService';
 import { selectAuthUser, updateCurrentUser } from '../../redux/auth/authSlice';
 import { selectUsers } from '../../redux/users/userSelectors';
 import { updateUser } from '../../redux/users/userActions';
@@ -55,7 +55,7 @@ const Profile = () => {
 
   const loadUserData = () => {
     if (user) {
-      // Load full user data from localStorage since session only has basic info
+      // The authenticated user is hydrated by the API session endpoint.
       const fullUser = users.find(u => u.id === user.id || u.email === user.email);
       
       const userData = fullUser || user;
@@ -91,9 +91,9 @@ const Profile = () => {
       updatedAt: new Date().toISOString()
     };
     if (customerIndex >= 0) dispatch(updateCustomer({ ...customerData, id: customers[customerIndex].id }));
-    else dispatch(addCustomer({ id: localStorageService.generateId('CUST'), ...customerData, createdAt: new Date().toISOString() }));
+    else dispatch(addCustomer({ id: appService.generateId('CUST'), ...customerData, createdAt: new Date().toISOString() }));
 
-    setSuccessMessage('Profile information updated successfully in LocalStorage.');
+    setSuccessMessage('Profile information updated successfully through the API.');
     setTimeout(() => setSuccessMessage(''), 3500);
   };
 

@@ -1,5 +1,4 @@
-import axios from 'axios';
-import localStorageService, { STORAGE_KEYS } from './localStorageService';
+import api from '../api/axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const userApi = axios.create({
@@ -22,7 +21,7 @@ const roleToUserType = { admin: 'admin', inventory: 'teamlead', sales: 'employee
 const userTypeToRole = { admin: 'admin', teamlead: 'inventory', employee: 'sales' };
 const normalizeUser = user => user ? {
   ...user,
-  role: user.role || userTypeToRole[user.userType] || 'sales',
+  role: user.role || ({ admin: 'admin', teamlead: 'inventory', employee: 'sales' }[user.userType] || 'sales'),
   status: user.status || 'active',
   createdAt: user.createdAt || user.joiningDate
 } : user;
@@ -66,5 +65,4 @@ export const deleteUserApi = async id => {
   await userApi.delete(`/users/${id}`);
   return { id };
 };
-
-export default userApi;
+export default api;

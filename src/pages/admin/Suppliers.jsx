@@ -39,7 +39,7 @@ import { maskSensitive } from '../../utils/formatters';
 import { selectAuthUser } from '../../redux/auth/authSlice';
 import { selectSuppliers, removeSupplier } from '../../redux/suppliers/suppliersSlice';
 import { selectCars } from '../../redux/cars/carsSlice';
-import localStorageService from '../../services/localStorageService';
+import * as appService from '../../services/appService';
 import { ROLES } from '../../utils/constants';
 
 const Suppliers = () => {
@@ -87,7 +87,7 @@ const Suppliers = () => {
   const handleDeleteConfirm = () => {
     if (deleteDialog.supplier) {
       dispatch(removeSupplier(deleteDialog.supplier.id));
-      localStorageService.logActivity({
+      appService.logActivity({
         type: 'delete',
         entity: 'supplier',
         entityId: deleteDialog.supplier.id,

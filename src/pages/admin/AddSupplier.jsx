@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { ArrowBack, Save, Business, ContactPhone } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
-import localStorageService from '../../services/localStorageService';
+import * as appService from '../../services/appService';
 import { validateSupplierForm } from '../../utils/validators';
 import { SUPPLIER_STATUS, PAKISTAN_CITIES, ROLES } from '../../utils/constants';
 import { selectAuthUser } from '../../redux/auth/authSlice';
@@ -50,7 +50,22 @@ const AddSupplier = () => {
   useEffect(() => {
     if (isEdit) {
       const supplier = suppliers.find(item => item.id === id);
-      if (supplier) setFormData(supplier);
+      if (supplier) {
+        setFormData(prev => ({
+          ...prev,
+          ...supplier,
+          companyName: supplier.companyName || '',
+          contactPerson: supplier.contactPerson || '',
+          email: supplier.email || '',
+          phone: supplier.phone || '',
+          address: supplier.address || '',
+          city: supplier.city || 'Lahore',
+          cnic: supplier.cnic || '',
+          ntn: supplier.ntn || '',
+          status: supplier.status || SUPPLIER_STATUS.ACTIVE,
+          notes: supplier.notes || ''
+        }));
+      }
     }
   }, [id, isEdit, suppliers]);
 
@@ -91,7 +106,7 @@ const AddSupplier = () => {
       if (isEdit) {
         if (suppliers.some(s => s.id === id)) {
           dispatch(updateSupplier({ id, ...supplierData, updatedAt: new Date().toISOString() }));
-          localStorageService.logActivity({
+          appService.logActivity({
             type: 'update',
             entity: 'supplier',
             entityId: id,
@@ -99,10 +114,10 @@ const AddSupplier = () => {
           });
         }
       } else {
-        supplierData.id = localStorageService.generateId('SUP');
+        supplierData.id = appService.generateId('SUP');
         supplierData.createdAt = new Date().toISOString();
         dispatch(addSupplier(supplierData));
-        localStorageService.logActivity({
+        appService.logActivity({
           type: 'create',
           entity: 'supplier',
           entityId: supplierData.id,

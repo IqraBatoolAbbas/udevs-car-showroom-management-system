@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import { ArrowBack, Save, DirectionsCar, AttachMoney, TrendingUp, Warning } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
-import localStorageService from '../../services/localStorageService';
+import * as appService from '../../services/appService';
 import { validateCarForm } from '../../utils/validators';
 import { calculateProfit, calculateProfitMargin } from '../../utils/calculations';
 import { CAR_STATUS, FUEL_TYPES, TRANSMISSION_TYPES, CAR_COLORS } from '../../utils/constants';
@@ -51,7 +51,7 @@ const AddCar = () => {
     transmission: 'Automatic',
     mileage: 0,
     engine: '1800cc',
-    images: ['https://images.unsplash.com/photo-1623869675781-80aa31012a5a?w=800'],
+    images: ['/images/car1.jpg'],
     description: '',
     status: CAR_STATUS.AVAILABLE,
     supplierId: ''
@@ -152,7 +152,7 @@ const AddCar = () => {
       if (isEdit) {
         if (cars.some(c => c.id === id)) {
           dispatch(updateCar({ id, ...carData, updatedAt: new Date().toISOString() }));
-          localStorageService.logActivity({
+          appService.logActivity({
             type: 'update',
             entity: 'car',
             entityId: id,
@@ -160,10 +160,10 @@ const AddCar = () => {
           });
         }
       } else {
-        carData.id = localStorageService.generateId('CAR');
+        carData.id = appService.generateId('CAR');
         carData.createdAt = new Date().toISOString();
         dispatch(addCar(carData));
-        localStorageService.logActivity({
+        appService.logActivity({
           type: 'create',
           entity: 'car',
           entityId: carData.id,
@@ -458,7 +458,7 @@ const AddCar = () => {
                     label={`Image URL #${index + 1}`}
                     value={image}
                     onChange={(e) => handleImageChange(index, e.target.value)}
-                    placeholder="https://images.unsplash.com/..."
+                    placeholder="/images/car1.jpg"
                   />
                   {formData.images.length > 1 && (
                     <Button
@@ -576,7 +576,7 @@ const AddCar = () => {
                   component="img"
                   src={formData.images[0]}
                   alt="Vehicle Preview"
-                  onError={(e) => { e.target.src = 'https://via.placeholder.com/400x250?text=Invalid+Image+URL'; }}
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   sx={{ width: '100%', height: 180, objectFit: 'cover', borderRadius: 2 }}
                 />
               </Paper>

@@ -2,6 +2,7 @@ import { Card, CardMedia, CardContent, CardActions, Typography, Chip, Box, Butto
 import { Favorite, FavoriteBorder, CompareArrows, Visibility, Edit } from '@mui/icons-material';
 import { formatCurrency, formatCarName } from '../../utils/formatters';
 import StatusChip from '../common/StatusChip';
+import { getCarImage } from '../../utils/carImages';
 
 const CarCard = ({ 
   car, 
@@ -14,7 +15,7 @@ const CarCard = ({
   onToggleCompare,
   showStaffMargin = false
 }) => {
-  const mainImage = car.images?.[0] || 'https://images.unsplash.com/photo-1590362891991-f776e747a588?w=800';
+  const mainImage = getCarImage(car);
 
   const getColorCode = (colorName) => {
     const colorMap = {

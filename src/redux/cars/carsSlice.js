@@ -1,11 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
 
 const carsSlice = createSlice({
   name: 'cars',
   initialState: {
-    items: localStorageService.getData(STORAGE_KEYS.CARS, []),
-    wishlist: localStorageService.getData(STORAGE_KEYS.WISHLIST, []),
+    items: [],
+    wishlist: [],
     loading: false,
     error: null
   },
@@ -30,4 +29,3 @@ export const { setCars, addCar, updateCar, removeCar, toggleWishlist, setWishlis
 export const selectCars = state => state.cars.items;
 export const selectWishlist = state => state.cars.wishlist;
 export default carsSlice.reducer;
-

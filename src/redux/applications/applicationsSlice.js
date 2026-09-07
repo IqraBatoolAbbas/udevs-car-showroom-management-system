@@ -1,9 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
 
 const applicationsSlice = createSlice({
   name: 'applications',
-  initialState: { items: localStorageService.getData(STORAGE_KEYS.APPLICATIONS, []) },
+  initialState: { items: [] },
   reducers: {
     setApplications: (state, action) => { state.items = action.payload || []; },
     addApplication: (state, action) => { state.items.unshift(action.payload); },
@@ -18,4 +17,3 @@ const applicationsSlice = createSlice({
 export const { setApplications, addApplication, updateApplication, removeApplication } = applicationsSlice.actions;
 export const selectApplications = state => state.applications.items;
 export default applicationsSlice.reducer;
-

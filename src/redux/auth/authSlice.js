@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
 import api from '../../api/axios';
 
-const session = localStorageService.getData(STORAGE_KEYS.SESSION, null);
+const userFromResponse = response => response.data?.data?.user || response.data?.data;
 
 const toSession = (account) => ({
   id: account.id,
@@ -42,57 +42,43 @@ export const login = createAsyncThunk('auth/login', async ({ email, password }, 
   return currentSession;
 });
 
-export const restoreSession = createAsyncThunk('auth/restoreSession', async (_, { getState }) => {
-  const saved = localStorageService.getData(STORAGE_KEYS.SESSION, null);
-  if (!saved) return null;
-  const users = getState().users?.users?.length
-    ? getState().users.users
-    : localStorageService.getData(STORAGE_KEYS.USERS, []);
-  const account = users.find(item => item.id === saved.id || item.email?.toLowerCase() === saved.email?.toLowerCase());
-  if (account?.status === 'active') {
-    const refreshed = toSession(account);
-    localStorageService.setData(STORAGE_KEYS.SESSION, refreshed);
-    return refreshed;
+export const restoreSession = createAsyncThunk('auth/restoreSession', async (_, { rejectWithValue }) => {
+  try {
+    return userFromResponse(await api.get('/auth/me'));
+  } catch (error) {
+    if (error.response?.status === 401) return null;
+    return rejectWithValue(error.response?.data?.message || 'Unable to restore session');
   }
-  localStorageService.removeData(STORAGE_KEYS.SESSION);
-  return null;
+});
+
+export const logout = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
+  try { await api.post('/auth/logout'); return null; }
+  catch (error) { return rejectWithValue(error.response?.data?.message || 'Unable to log out'); }
 });
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: { user: session, loading: false, initializing: true, error: null },
+  initialState: { user: null, loading: false, initializing: true, error: null },
   reducers: {
-    logout: (state) => {
-      if (state.user) {
-        localStorageService.logActivity({
-          type: 'logout',
-          entity: 'user',
-          entityId: state.user.id,
-          description: `User ${state.user.email} logged out`
-        });
-      }
-      state.user = null;
-      state.error = null;
-      localStorageService.removeData(STORAGE_KEYS.SESSION);
-    },
-    updateCurrentUser: (state, action) => {
-      state.user = state.user ? { ...state.user, ...action.payload } : state.user;
-      if (state.user) localStorageService.setData(STORAGE_KEYS.SESSION, state.user);
-    },
-    clearAuthError: (state) => { state.error = null; }
+    updateCurrentUser: (state, action) => { state.user = state.user ? { ...state.user, ...action.payload } : state.user; },
+    clearAuthError: state => { state.error = null; }
   },
   extraReducers: builder => {
     builder
       .addCase(login.pending, state => { state.loading = true; state.error = null; })
       .addCase(login.fulfilled, (state, action) => { state.loading = false; state.user = action.payload; })
-      .addCase(login.rejected, (state, action) => { state.loading = false; state.error = action.payload || 'Unable to sign in'; })
+      .addCase(login.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
+      .addCase(register.fulfilled, (state, action) => { state.user = action.payload; state.error = null; })
+      .addCase(register.rejected, (state, action) => { state.error = action.payload; })
       .addCase(restoreSession.pending, state => { state.initializing = true; })
       .addCase(restoreSession.fulfilled, (state, action) => { state.initializing = false; state.user = action.payload; })
-      .addCase(restoreSession.rejected, state => { state.initializing = false; state.user = null; });
+      .addCase(restoreSession.rejected, state => { state.initializing = false; state.user = null; })
+      .addCase(logout.fulfilled, state => { state.user = null; state.error = null; })
+      .addCase(logout.rejected, (state, action) => { state.error = action.payload; });
   }
 });
 
-export const { logout, updateCurrentUser, clearAuthError } = authSlice.actions;
+export const { updateCurrentUser, clearAuthError } = authSlice.actions;
 export const selectAuthUser = state => state.auth.user;
 export const selectAuthLoading = state => state.auth.initializing;
 export const selectIsAuthenticated = state => Boolean(state.auth.user);

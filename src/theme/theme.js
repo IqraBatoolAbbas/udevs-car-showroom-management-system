@@ -16,7 +16,7 @@ const createAppTheme = (mode = 'light') => createTheme({
       contrastText: '#ffffff',
     },
     background: {
-      default: mode === 'dark' ? '#071321' : '#F8F9FA',
+      default: mode === 'dark' ? '#071321' : '#ffffff',
       paper: mode === 'dark' ? '#10263a' : '#ffffff',
     },
     text: {

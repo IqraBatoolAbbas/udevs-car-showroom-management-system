@@ -32,7 +32,7 @@ import {
   Warning
 } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
-import localStorageService, { STORAGE_KEYS } from '../../services/localStorageService';
+import { activityLogsApi } from '../../services/showroomApi';
 import { selectCars } from '../../redux/cars/carsSlice';
 import { selectSuppliers } from '../../redux/suppliers/suppliersSlice';
 import { selectApplications } from '../../redux/applications/applicationsSlice';
@@ -62,11 +62,12 @@ const Reports = () => {
     loadReportData();
   }, [carsFromStore, suppliersFromStore, applicationsFromStore, customersFromStore]);
 
-  const loadReportData = () => {
+  const loadReportData = async () => {
     const carsData = carsFromStore;
     const appsData = applicationsFromStore;
     const custData = customersFromStore;
-    const logsData = localStorageService.getData(STORAGE_KEYS.ACTIVITY_LOGS, []);
+    const logsResult = await activityLogsApi.list({ limit: 100 });
+    const logsData = Array.isArray(logsResult) ? logsResult : logsResult.rows || [];
     const supData = suppliersFromStore;
 
     const inventoryStats = calculateInventoryStats(carsData);

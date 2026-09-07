@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import { Close, DeleteOutline, CompareArrows, CheckCircle } from '@mui/icons-material';
 import { formatCurrency, formatCarName } from '../../utils/formatters';
+import { getCarImage } from '../../utils/carImages';
 
 const CarCompareModal = ({ open, onClose, compareCars = [], onRemoveCar, onSelectCar }) => {
   if (compareCars.length === 0) return null;
@@ -27,7 +28,7 @@ const CarCompareModal = ({ open, onClose, compareCars = [], onRemoveCar, onSelec
       <Box sx={{ textAlign: 'center' }}>
         <Box
           component="img"
-          src={car.images?.[0] || 'https://via.placeholder.com/300x180?text=No+Image'}
+          src={getCarImage(car)}
           alt={formatCarName(car)}
           sx={{ width: '100%', height: 130, objectFit: 'cover', borderRadius: 2, mb: 1, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
         />
@@ -140,7 +141,7 @@ const CarCompareModal = ({ open, onClose, compareCars = [], onRemoveCar, onSelec
         <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid rgba(0,0,0,0.08)', borderRadius: 3 }}>
           <Table>
             <TableHead>
-              <TableRow sx={{ bgcolor: '#F8F9FA' }}>
+              <TableRow sx={{ bgcolor: '#ffffff' }}>
                 <TableCell sx={{ width: 180, fontWeight: 700, color: '#4B5563' }}>Feature</TableCell>
                 {compareCars.map((car) => (
                   <TableCell key={car.id} sx={{ minWidth: 220, position: 'relative', textAlign: 'center' }}>
@@ -176,7 +177,7 @@ const CarCompareModal = ({ open, onClose, compareCars = [], onRemoveCar, onSelec
         </TableContainer>
       </DialogContent>
 
-      <DialogActions sx={{ p: 2.5, bgcolor: '#F8F9FA', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+      <DialogActions sx={{ p: 2.5, bgcolor: '#ffffff', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
         <Button onClick={onClose} variant="outlined" sx={{ borderRadius: 2 }}>
           Close Comparison
         </Button>

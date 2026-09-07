@@ -27,7 +27,7 @@ import {
 } from '@mui/material';
 import { PersonAdd, Email, Phone, LocationOn, Close, Download, Search, Assignment, Person } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
-import localStorageService from '../../services/localStorageService';
+import * as appService from '../../services/appService';
 import { selectCustomers, addCustomer } from '../../redux/customers/customersSlice';
 import { selectApplications } from '../../redux/applications/applicationsSlice';
 import { validateCustomerForm } from '../../utils/validators';
@@ -88,13 +88,13 @@ const Customers = () => {
     }
 
     const newCustomer = {
-      id: localStorageService.generateId('CUST'),
+      id: appService.generateId('CUST'),
       ...formData,
       createdAt: new Date().toISOString()
     };
 
     dispatch(addCustomer(newCustomer));
-    localStorageService.logActivity({
+    appService.logActivity({
       type: 'create',
       entity: 'customer',
       entityId: newCustomer.id,

@@ -417,7 +417,7 @@ const AdminLayout = () => {
           p: { xs: 2, sm: 3, md: 4 },
           width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
           minHeight: '100vh',
-          backgroundColor: '#F8F9FA',
+          backgroundColor: '#ffffff',
         }}
       >
         <Toolbar />
