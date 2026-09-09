@@ -1,0 +1,94 @@
+.admin-dashboard {
+  padding: 8px 0;
+  min-height: 100%;
+}
+
+.kpi-grid {
+  margin-bottom: 28px;
+}
+
+/* Modern Card with Subtle Border Accent */
+.dashboard-paper {
+  border-radius: 18px !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04) !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dashboard-paper:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(21, 101, 192, 0.12) !important;
+  border-color: rgba(21, 101, 192, 0.3) !important;
+}
+
+/* Vibrant Header Gradient */
+.paper-header {
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1565c0 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.paper-content {
+  padding: 24px;
+  flex-grow: 1;
+}
+
+/* Modern Clean Table Styling */
+.dashboard-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.dashboard-table thead {
+  background: #f8fafc !important;
+}
+
+.dashboard-table th {
+  font-weight: 700 !important;
+  color: #475569 !important;
+  padding: 14px 20px !important;
+  font-size: 0.82rem !important;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e2e8f0 !important;
+  letter-spacing: 0.6px;
+}
+
+.dashboard-table td {
+  padding: 16px 20px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  color: #1e293b;
+  font-size: 0.92rem;
+}
+
+.dashboard-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.dashboard-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+/* Clean Empty State */
+.empty-state {
+  padding: 56px 16px;
+  text-align: center;
+  background: #fafafa;
+  border-radius: 12px;
+  margin: 12px 0;
+  border: 1px dashed #cbd5e1;
+}
+
+.empty-state-text {
+  color: #64748b;
+  font-size: 0.95rem;
+  font-weight: 500;
+}

@@ -1,0 +1,154 @@
+.reports-page {
+  padding: 24px;
+  background: linear-gradient(135deg, #F8F9FA 0%, #E3F2FD 100%);
+  min-height: 100vh;
+}
+
+.summary-grid {
+  margin-bottom: 32px;
+}
+
+.summary-card {
+  transition: all 0.3s ease-in-out;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  background: white;
+}
+
+.summary-card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.2);
+}
+
+.summary-card .MuiCardContent-root {
+  padding: 24px;
+}
+
+.report-section {
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  transition: all 0.3s ease-in-out;
+  background: white;
+}
+
+.report-section:hover {
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  transform: translateY(-4px);
+}
+
+.section-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 2px solid rgba(21, 101, 192, 0.1);
+}
+
+.section-header h6 {
+  font-weight: 700;
+  color: #1565C0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.2rem;
+}
+
+.dashboard-table {
+  width: 100%;
+}
+
+.dashboard-table thead {
+  background: linear-gradient(135deg, #1565C0 0%, #00ACC1 100%);
+}
+
+.dashboard-table th {
+  font-weight: 700;
+  color: white;
+  padding: 16px;
+  text-align: left;
+  border-bottom: 2px solid rgba(255,255,255,0.2);
+}
+
+.dashboard-table td {
+  padding: 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.dashboard-table tr:hover {
+  background-color: rgba(21, 101, 192, 0.05);
+}
+
+.breakdown-grid {
+  margin-bottom: 24px;
+}
+
+.status-card {
+  transition: all 0.3s ease-in-out;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  background: white;
+}
+
+.status-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+.status-card .MuiCardContent-root {
+  text-align: center;
+  padding: 24px;
+}
+
+.status-card h3 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #1565C0 0%, #00ACC1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@media (max-width: 768px) {
+  .reports-page {
+    padding: 16px;
+  }
+
+  .summary-grid {
+    margin-bottom: 24px;
+  }
+
+  .report-section {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .section-header h6 {
+    font-size: 1rem;
+  }
+
+  .dashboard-table th,
+  .dashboard-table td {
+    padding: 12px;
+    font-size: 0.875rem;
+  }
+
+  .status-card h3 {
+    font-size: 2rem;
+  }
+
+  .summary-card .MuiCardContent-root,
+  .status-card .MuiCardContent-root {
+    padding: 16px;
+  }
+}
