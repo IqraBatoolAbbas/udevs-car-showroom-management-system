@@ -325,7 +325,7 @@ const CustomerLayout = () => {
         }}
       >
         <Container maxWidth="xl" sx={{ px: { xs: 0, sm: 2 } }}>
-          <Outlet />
+          <Outlet key={location.pathname} />
         </Container>
       </Box>
 

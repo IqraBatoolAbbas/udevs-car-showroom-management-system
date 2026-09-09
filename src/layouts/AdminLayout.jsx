@@ -421,7 +421,7 @@ const AdminLayout = () => {
         }}
       >
         <Toolbar />
-        <Outlet />
+        <Outlet key={location.pathname} />
       </Box>
 
       {/* Notification Drawer Component */}
