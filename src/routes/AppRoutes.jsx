@@ -17,6 +17,7 @@ import Cars from '../pages/admin/Cars';
 import AddCar from '../pages/admin/AddCar';
 import Suppliers from '../pages/admin/Suppliers';
 import AddSupplier from '../pages/admin/AddSupplier';
+import SupplierDetails from '../pages/admin/SupplierDetails';
 import Applications from '../pages/admin/Applications';
 import Users from '../pages/admin/Users';
 import Customers from '../pages/admin/Customers';
@@ -84,6 +85,7 @@ const AppRoutes = () => {
             <Route path="suppliers" element={<Suppliers />} />
             <Route path="suppliers/add" element={<AddSupplier />} />
             <Route path="suppliers/edit/:id" element={<AddSupplier />} />
+            <Route path="suppliers/view/:id" element={<SupplierDetails />} />
             <Route path="customers" element={<Customers />} />
             <Route path="applications" element={<Applications />} />
             <Route path="users" element={<Users />} />
@@ -126,6 +128,7 @@ const AppRoutes = () => {
             <Route path="suppliers" element={<Suppliers />} />
             <Route path="suppliers/add" element={<AddSupplier />} />
             <Route path="suppliers/edit/:id" element={<AddSupplier />} />
+            <Route path="suppliers/view/:id" element={<SupplierDetails />} />
             <Route path="reports" element={<Reports />} />
             <Route path="" element={<Navigate to="/inventory/dashboard" replace />} />
           </Route>

@@ -21,12 +21,14 @@ import {
 import { ArrowBack, Save, DirectionsCar, AttachMoney, TrendingUp, Warning } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
 import * as appService from '../../services/appService';
+import { carsApi } from '../../services/showroomApi';
 import { validateCarForm } from '../../utils/validators';
 import { calculateProfit, calculateProfitMargin } from '../../utils/calculations';
 import { CAR_STATUS, FUEL_TYPES, TRANSMISSION_TYPES, CAR_COLORS } from '../../utils/constants';
 import { formatCurrency } from '../../utils/formatters';
 import { selectSuppliers } from '../../redux/suppliers/suppliersSlice';
 import { selectCars, addCar, updateCar } from '../../redux/cars/carsSlice';
+
 
 const AddCar = () => {
   const navigate = useNavigate();
@@ -120,65 +122,92 @@ const AddCar = () => {
   const liveMargin = calculateProfitMargin(liveProfit, numSelling);
   const isLoss = numSelling > 0 && numPurchase > 0 && numSelling < numPurchase;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setErrors({});
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setErrors({});
 
-  const validationErrors = validateCarForm({
+ const validationErrors = validateCarForm({
   ...formData,
-  stock: parseInt(formData.stock, 10) || 0,
-  stockQuantity: parseInt(formData.stock, 10) || 0
-});
-
-    setLoading(true);
-
-    try {
-      const profit = calculateProfit(parseFloat(formData.sellingPrice), parseFloat(formData.purchaseRate));
-      const margin = parseFloat(calculateProfitMargin(profit, parseFloat(formData.sellingPrice)));
-
-      const carData = {
-  ...formData,
-  stock: parseInt(formData.stock, 10) || 0,
-  stockQuantity: parseInt(formData.stock, 10) || 0, // Validator and API key alignment
   purchaseRate: parseFloat(formData.purchaseRate) || 0,
   sellingPrice: parseFloat(formData.sellingPrice) || 0,
-  year: parseInt(formData.year, 10) || new Date().getFullYear(),
-  mileage: parseFloat(formData.mileage) || 0,
-  images: formData.images.filter(img => img.trim() !== ''),
-  profit,
-  profitMargin: margin
-};
+  stock: parseInt(formData.stock, 10) || 0,
+  year: parseInt(formData.year, 10) || 0,
+  mileage: parseInt(formData.mileage, 10) || 0
+});
 
-      if (isEdit) {
-        if (cars.some(c => c.id === id)) {
-          dispatch(updateCar({ id, ...carData, updatedAt: new Date().toISOString() }));
-          appService.logActivity({
-            type: 'update',
-            entity: 'car',
-            entityId: id,
-            description: `Updated vehicle record: ${carData.make} ${carData.model} (${id})`
-          });
-        }
-      } else {
-        carData.id = appService.generateId('CAR');
-        carData.createdAt = new Date().toISOString();
-        dispatch(addCar(carData));
-        appService.logActivity({
-          type: 'create',
-          entity: 'car',
-          entityId: carData.id,
-          description: `Created new vehicle record: ${carData.make} ${carData.model} (${carData.id})`
-        });
-      }
+  if (Object.keys(validationErrors).length > 0) {
+    setErrors(validationErrors);
+    return;
+  }
 
-      navigate(`${basePath}/cars`);
-    } catch (error) {
-      console.error('Error saving car:', error);
-      setErrors({ submit: 'An error occurred while saving vehicle data.' });
-    } finally {
-      setLoading(false);
+  setLoading(true);
+
+  try {
+    const purchaseRate = parseFloat(formData.purchaseRate) || 0;
+    const sellingPrice = parseFloat(formData.sellingPrice) || 0;
+
+    const profit = calculateProfit(sellingPrice, purchaseRate);
+    const margin = parseFloat(
+      calculateProfitMargin(profit, sellingPrice)
+    );
+
+    const carData = {
+      ...formData,
+      stock: parseInt(formData.stock, 10) || 0,
+      purchaseRate,
+      sellingPrice,
+      year: parseInt(formData.year, 10) || new Date().getFullYear(),
+      mileage: parseInt(formData.mileage, 10) || 0,
+      images: formData.images.filter(img => img.trim() !== ''),
+      profit,
+      profitMargin: margin
+    };
+
+    if (isEdit) {
+      // Update existing car in PostgreSQL
+      const updatedCar = await carsApi.update(id, carData);
+
+      // Update Redux only after PostgreSQL succeeds
+      dispatch(updateCar(updatedCar));
+
+      appService.logActivity({
+        type: 'update',
+        entity: 'car',
+        entityId: id,
+        description: `Updated vehicle record: ${carData.make} ${carData.model} (${id})`
+      });
+    } else {
+      // Generate ID
+      carData.id = appService.generateId('CAR');
+
+      // Create car in PostgreSQL
+      const createdCar = await carsApi.create(carData);
+
+      // Update Redux only after PostgreSQL succeeds
+      dispatch(addCar(createdCar));
+
+      appService.logActivity({
+        type: 'create',
+        entity: 'car',
+        entityId: createdCar.id,
+        description: `Created new vehicle record: ${createdCar.make} ${createdCar.model} (${createdCar.id})`
+      });
     }
-  };
+
+    navigate(`${basePath}/cars`);
+
+  } catch (error) {
+    console.error('Error saving car:', error);
+
+    setErrors({
+      submit:
+        error.response?.data?.message ||
+        'An error occurred while saving vehicle data.'
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <Box>

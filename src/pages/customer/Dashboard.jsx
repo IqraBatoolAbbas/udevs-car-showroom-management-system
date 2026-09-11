@@ -28,6 +28,7 @@ import { selectCars, selectWishlist, toggleWishlist } from '../../redux/cars/car
 import { selectApplications } from '../../redux/applications/applicationsSlice';
 import { formatRelativeTime } from '../../utils/formatters';
 import './Dashboard.css';
+import { carsApi, applicationsApi } from '../../services/showroomApi';
 
 const CustomerDashboard = () => {
   const navigate = useNavigate();

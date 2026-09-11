@@ -4,6 +4,7 @@ const { isAuthenticated, authorize } = require('../middleware/authMiddleware');
 const makeResourceController = require('../controllers/resourceController');
 const { Car, Supplier, Customer, Notification, ActivityLog, Setting } = require('../models');
 const applicationController = require('../controllers/applicationController');
+const activityLogController = require('../controllers/activityLogController');
 
 const createRoutes = (controller, writeRoles = ['admin'], readRoles) => {
   const router = express.Router();
@@ -25,6 +26,21 @@ const applications = createRoutes(applicationController, ['admin', 'sales', 'cus
 applications.patch('/:id/status', authorize('admin', 'sales'), asyncHandler(applicationController.updateStatus));
 router.use('/applications', applications);
 router.use('/notifications', createRoutes(makeResourceController(Notification, ['title', 'message']), ['admin'], ['admin', 'sales', 'inventory', 'customer']));
-router.use('/activity-logs', createRoutes(makeResourceController(ActivityLog, ['description']), ['admin'], ['admin']));
+const activityLogRouter = express.Router();
+
+activityLogRouter.get(
+  '/',
+  authorize('admin'),
+  asyncHandler(activityLogController.list)
+);
+
+activityLogRouter.get(
+  '/:id',
+  authorize('admin'),
+  asyncHandler(activityLogController.get)
+);
+
+router.use('/activity-logs', activityLogRouter);
 router.use('/settings', createRoutes(makeResourceController(Setting, ['key']), ['admin'], ['admin']));
 module.exports = router;
+

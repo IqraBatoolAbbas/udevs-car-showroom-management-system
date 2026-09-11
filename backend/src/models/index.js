@@ -11,6 +11,8 @@ const Setting = require('./Setting');
 Supplier.hasMany(Car, { foreignKey: 'supplierId', sourceKey: 'id' });
 Car.belongsTo(Supplier, { foreignKey: 'supplierId', targetKey: 'id' });
 User.hasMany(Customer, { foreignKey: 'userId', sourceKey: 'id' });
+User.hasMany(ActivityLog, { foreignKey: 'userId', sourceKey: 'id' });
+ActivityLog.belongsTo(User, { foreignKey: 'userId', targetKey: 'id' });
 Customer.belongsTo(User, { foreignKey: 'userId', targetKey: 'id' });
 Customer.hasMany(Application, { foreignKey: 'customerId', sourceKey: 'id' });
 Application.belongsTo(Customer, { foreignKey: 'customerId', targetKey: 'id' });

@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { restoreSession, selectAuthLoading, selectAuthUser } from './redux/auth/authSlice';
 import { selectThemeMode } from './redux/theme/themeSlice';
 import { fetchCollection } from './redux/showroom/showroomSlice';
-import { setCars } from './redux/cars/carsSlice';
+import { setCars, setCarsLoading } from './redux/cars/carsSlice';
 import { setSuppliers } from './redux/suppliers/suppliersSlice';
 import { setCustomers } from './redux/customers/customersSlice';
 import { setApplications } from './redux/applications/applicationsSlice';
@@ -41,10 +41,37 @@ function App() {
       }
       if (user.role === ROLES.ADMIN) resources.push(['notifications', setNotifications]);
       resources.forEach(([resource, hydrate]) => {
-        dispatch(fetchCollection({ resource })).unwrap()
-          .then(({ result }) => dispatch(hydrate(Array.isArray(result) ? result : result.rows || [])))
-          .catch(error => console.error(`Unable to load ${resource} from API`, error));
-      });
+
+  if (resource === 'cars') {
+    dispatch(setCarsLoading(true));
+  }
+
+  dispatch(fetchCollection({ resource }))
+    .unwrap()
+    .then(({ result }) => {
+      dispatch(
+        hydrate(
+          Array.isArray(result)
+            ? result
+            : result.rows || []
+        )
+      );
+      if (resource === 'cars') {
+      dispatch(setCarsLoading(false));
+    }
+  
+    })
+    .catch(error => {
+      console.error(
+        `Unable to load ${resource} from API`,
+        error
+      );
+
+      if (resource === 'cars') {
+        dispatch(setCarsLoading(false));
+      }
+    });
+});
     }
   }, [dispatch, loading, user]);
 

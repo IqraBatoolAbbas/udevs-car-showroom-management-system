@@ -18,10 +18,12 @@ import {
 import { ArrowBack, Save, Business, ContactPhone } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
 import * as appService from '../../services/appService';
+import { suppliersApi } from '../../services/showroomApi';
 import { validateSupplierForm } from '../../utils/validators';
 import { SUPPLIER_STATUS, PAKISTAN_CITIES, ROLES } from '../../utils/constants';
 import { selectAuthUser } from '../../redux/auth/authSlice';
 import { selectSuppliers, addSupplier, updateSupplier } from '../../redux/suppliers/suppliersSlice';
+
 
 const AddSupplier = () => {
   const navigate = useNavigate();
@@ -84,56 +86,71 @@ const AddSupplier = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setErrors({});
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setErrors({});
 
-    const validationErrors = validateSupplierForm(formData);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
+  const validationErrors = validateSupplierForm(formData);
+
+  if (Object.keys(validationErrors).length > 0) {
+    setErrors(validationErrors);
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const supplierData = {
+      ...formData,
+      phone: formData.phone.trim(),
+      email: formData.email.trim().toLowerCase(),
+      cnic: formData.cnic.trim(),
+      ntn: formData.ntn.trim(),
+      notes: formData.notes.trim()
+    };
+
+    if (isEdit) {
+      const updatedSupplier = await suppliersApi.update(id, supplierData);
+
+      dispatch(updateSupplier(updatedSupplier));
+
+      appService.logActivity({
+        type: 'update',
+        entity: 'supplier',
+        entityId: id,
+        description: `Updated supplier details: ${supplierData.companyName} (${id})`
+      });
+    } else {
+      supplierData.id = appService.generateId('SUP');
+
+      const createdSupplier = await suppliersApi.create(supplierData);
+
+      dispatch(addSupplier(createdSupplier));
+
+      appService.logActivity({
+        type: 'create',
+        entity: 'supplier',
+        entityId: createdSupplier.id,
+        description: `Registered new supplier: ${createdSupplier.companyName} (${createdSupplier.id})`
+      });
     }
 
-    setLoading(true);
+    const basePath =
+      user?.role === ROLES.INVENTORY ? '/inventory' : '/admin';
 
-    try {
-      const supplierData = {
-        ...formData,
-        phone: formData.phone.trim(),
-        email: formData.email.trim().toLowerCase()
-      };
+    navigate(`${basePath}/suppliers`);
+  } catch (error) {
+    console.error('Error saving supplier:', error);
 
-      if (isEdit) {
-        if (suppliers.some(s => s.id === id)) {
-          dispatch(updateSupplier({ id, ...supplierData, updatedAt: new Date().toISOString() }));
-          appService.logActivity({
-            type: 'update',
-            entity: 'supplier',
-            entityId: id,
-            description: `Updated supplier details: ${supplierData.companyName} (${id})`
-          });
-        }
-      } else {
-        supplierData.id = appService.generateId('SUP');
-        supplierData.createdAt = new Date().toISOString();
-        dispatch(addSupplier(supplierData));
-        appService.logActivity({
-          type: 'create',
-          entity: 'supplier',
-          entityId: supplierData.id,
-          description: `Registered new supplier: ${supplierData.companyName} (${supplierData.id})`
-        });
-      }
-
-      const basePath = user?.role === ROLES.INVENTORY ? '/inventory' : '/admin';
-      navigate(`${basePath}/suppliers`);
-    } catch (error) {
-      console.error('Error saving supplier:', error);
-      setErrors({ submit: 'An error occurred while saving supplier data.' });
-    } finally {
-      setLoading(false);
-    }
-  };
+    setErrors({
+      submit:
+        error.response?.data?.message ||
+        'An error occurred while saving supplier data.'
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   const getBackPath = () => {
     return user?.role === ROLES.INVENTORY ? '/inventory/suppliers' : '/admin/suppliers';

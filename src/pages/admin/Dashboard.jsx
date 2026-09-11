@@ -35,6 +35,7 @@ import { selectApplications } from '../../redux/applications/applicationsSlice';
 import { selectCustomers } from '../../redux/customers/customersSlice';
 import { calculateInventoryStats, calculateApplicationStats, calculateTotalProfit } from '../../utils/calculations';
 import { formatCurrency, formatRelativeTime } from '../../utils/formatters';
+import { selectSettings } from '../../redux/settings/settingsSlice';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -42,6 +43,7 @@ const Dashboard = () => {
   const cars = useSelector(selectCars);
   const applications = useSelector(selectApplications);
   const customers = useSelector(selectCustomers);
+  const settings = useSelector(selectSettings);
   const [stats, setStats] = useState({
     inventory: null,
     applications: null,
@@ -77,11 +79,15 @@ const Dashboard = () => {
     setRecentActivity(activityLogs.slice(0, 8));
 
     // Get low stock cars (stock <= 3)
-    setLowStockCars(cars.filter(car => car.stock <= 3));
+    const lowStockThreshold = Number(settings?.lowStockThreshold ?? 3);
+
+setLowStockCars(
+  cars.filter(car => Number(car.stock) <= lowStockThreshold)
+);
   };
     useEffect(() => {
         loadDashboardData();
-      }, [cars, applications, customers]);
+      }, [cars, applications, customers, settings]);
   const getStatusChipColor = (status) => {
     switch (status?.toLowerCase()) {
       case 'approved': return { bg: 'rgba(59, 130, 246, 0.15)', color: '#2563EB' };
@@ -182,7 +188,7 @@ const Dashboard = () => {
             icon={Warning}
             color="#EF4444"
             trend={lowStockCars.length > 0 ? "down" : "up"}
-            trendValue="Stock ≤ 3 units"
+            trendValue={`Stock ≤ ${Number(settings?.lowStockThreshold ?? 3)} units`}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
@@ -374,7 +380,7 @@ const Dashboard = () => {
                             {activity.userEmail || 'System Console'}
                           </Typography>
                           <Typography variant="caption" color="textSecondary" sx={{ fontWeight: 500 }}>
-                            {formatRelativeTime(activity.timestamp)}
+                            {formatRelativeTime(activity.createdAt)}
                           </Typography>
                         </Box>
                       </Box>

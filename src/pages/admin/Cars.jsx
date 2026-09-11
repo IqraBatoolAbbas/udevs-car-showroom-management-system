@@ -42,6 +42,7 @@ import { selectAuthUser } from '../../redux/auth/authSlice';
 import { selectCars, removeCar } from '../../redux/cars/carsSlice';
 import { selectSuppliers } from '../../redux/suppliers/suppliersSlice';
 import * as appService from '../../services/appService';
+import { carsApi } from '../../services/showroomApi';
 
 const Cars = () => {
   const navigate = useNavigate();
@@ -56,7 +57,7 @@ const Cars = () => {
   const [supplierFilter, setSupplierFilter] = useState('');
   const [colorFilter, setColorFilter] = useState('');
   const [sortBy, setSortBy] = useState('name');
-  const [deleteDialog, setDeleteDialog] = useState({ open: false, car: null });
+  const [deleteDialog, setDeleteDialog] = useState({ open: false, car: null,  loading: false });
 
   useEffect(() => {
     applyFilters();
@@ -147,18 +148,38 @@ const Cars = () => {
     setDeleteDialog({ open: true, car });
   };
 
-  const handleDeleteConfirm = () => {
-    if (deleteDialog.car) {
-      dispatch(removeCar(deleteDialog.car.id));
-      appService.logActivity({
-        type: 'delete',
-        entity: 'car',
-        entityId: deleteDialog.car.id,
-        description: `Deleted vehicle ${formatCarName(deleteDialog.car)} (${deleteDialog.car.id})`
-      });
-      setDeleteDialog({ open: false, car: null });
-    }
-  };
+ const handleDeleteConfirm = async () => {
+  if (!deleteDialog.car) return;
+
+  setDeleteDialog(prev => ({ ...prev, loading: true }));
+
+  try {
+    // Delete from PostgreSQL
+    await carsApi.remove(deleteDialog.car.id);
+
+    // Remove from Redux only after database deletion succeeds
+    dispatch(removeCar(deleteDialog.car.id));
+
+    appService.logActivity({
+      type: 'delete',
+      entity: 'car',
+      entityId: deleteDialog.car.id,
+      description: `Deleted vehicle ${formatCarName(deleteDialog.car)} (${deleteDialog.car.id})`
+    });
+
+    setDeleteDialog({ open: false, car: null });
+
+  } catch (error) {
+    console.error('Error deleting car:', error);
+
+    setDeleteDialog(prev => ({ ...prev, loading: false }));
+
+    alert(
+      error.response?.data?.message ||
+      'Unable to delete vehicle from the database.'
+    );
+  }
+};
 
   const handleDeleteCancel = () => {
     setDeleteDialog({ open: false, car: null });

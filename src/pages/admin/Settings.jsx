@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Paper,
@@ -29,10 +29,12 @@ import {
 import PageHeader from '../../components/common/PageHeader';
 import { logActivity } from '../../services/appService';
 import './Settings.css';
+import { settingsApi } from '../../services/showroomApi';
 import { selectSettings, updateSettings } from '../../redux/settings/settingsSlice';
 import { selectCars } from '../../redux/cars/carsSlice';
 import { selectApplications } from '../../redux/applications/applicationsSlice';
 import { selectNotifications } from '../../redux/notifications/notificationsSlice';
+import { activityLogsApi } from '../../services/showroomApi';
 
 const defaultSettings = {
   showroomName: 'U Devs Car Showroom',
@@ -52,28 +54,102 @@ const Settings = () => {
   const cars = useSelector(selectCars);
   const applications = useSelector(selectApplications);
   const notifications = useSelector(selectNotifications);
+  const [activityLogsCount, setActivityLogsCount] = useState(0);
   const [settings, setSettings] = useState({ ...defaultSettings, ...savedSettings });
   const [clearDataDialog, setClearDataDialog] = useState(false);
   const [reseedDialog, setReseedDialog] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleSaveSettings = () => {
+  const handleSaveSettings = async () => {
+  try {
+    const existingSettings = await settingsApi.list({
+      key: 'system'
+    });
+
+    if (existingSettings?.length > 0) {
+      const existingSetting = existingSettings[0];
+
+      await settingsApi.update(existingSetting.key, {
+        key: 'system',
+        value: settings
+      });
+    } else {
+      await settingsApi.create({
+        key: 'system',
+        value: settings
+      });
+    }
+
     dispatch(updateSettings(settings));
+
     logActivity({
       type: 'update',
       entity: 'settings',
-      entityId: 'SYSTEM',
+      entityId: 'system',
       description: 'Updated system preferences and threshold configuration'
     });
+
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 3000);
+  } catch (error) {
+    console.error('Error saving settings:', error);
+
+    alert(
+      error.response?.data?.message ||
+      'Unable to save system settings to the database.'
+    );
+  }
+};
+useEffect(() => {
+  const loadSettings = async () => {
+    try {
+      const records = await settingsApi.list({
+        key: 'system'
+      });
+
+      if (records?.length > 0) {
+        const dbSettings = records[0]?.value || {};
+
+        setSettings({
+          ...defaultSettings,
+          ...dbSettings
+        });
+
+        dispatch(updateSettings({
+          ...defaultSettings,
+          ...dbSettings
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading settings:', error);
+    }
   };
+
+  loadSettings();
+}, [dispatch]);
 
   const handleClearAllData = () => {
     setClearDataDialog(false);
     window.location.href = '/login';
   };
 
+  useEffect(() => {
+  const loadActivityLogsCount = async () => {
+    try {
+      const result = await activityLogsApi.list({ limit: 1 });
+
+      if (Array.isArray(result)) {
+        setActivityLogsCount(result.length);
+      } else {
+        setActivityLogsCount(result?.pagination?.total || 0);
+      }
+    } catch (error) {
+      console.error('Error loading activity logs:', error);
+    }
+  };
+
+  loadActivityLogsCount();
+}, []);
   const handleReseedData = () => {
     setReseedDialog(false);
     setShowSuccess(true);
@@ -273,8 +349,15 @@ const Settings = () => {
                       <Chip label={`${applications.length} Orders`} size="small" sx={{ fontWeight: 700 }} />
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, p: 1.2, bgcolor: '#F8F9FA', borderRadius: 2 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 600, color: '#4B5563' }}>Audit Activity Logs</Typography>
-                      <Chip label={`${notifications.length} Notifications`} size="small" sx={{ fontWeight: 700 }} />
+                      <Typography variant="body2" sx={{ fontWeight: 600, color: '#4B5563' }}>
+  Audit Activity Logs
+</Typography>
+<Chip
+  label={`${activityLogsCount} Records`}
+  size="small"
+  sx={{ fontWeight: 700 }}
+/>
+                      
                     </Box>
                   </Grid>
 

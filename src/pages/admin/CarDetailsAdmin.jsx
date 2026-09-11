@@ -31,41 +31,55 @@ import PageHeader from '../../components/common/PageHeader';
 import StatusChip from '../../components/common/StatusChip';
 import { formatCurrency, formatCarName } from '../../utils/formatters';
 import { selectAuthUser } from '../../redux/auth/authSlice';
-import { selectCars } from '../../redux/cars/carsSlice';
+import { selectCars, selectCarsLoading } from '../../redux/cars/carsSlice';
 import { ROLES } from '../../utils/constants';
 import { getCarImages } from '../../utils/carImages';
 import './CarDetailsAdmin.css';
 
 const CarDetailsAdmin = () => {
   const { id } = useParams();
+  console.log("DETAIL PAGE ID:", id);
   const navigate = useNavigate();
   const user = useSelector(selectAuthUser);
 
   const cars = useSelector(selectCars);
+  const carsLoading = useSelector(selectCarsLoading);
   const car = cars.find(c => String(c.id) === String(id));
+  console.log("DETAIL PAGE CAR:", car);
+console.log("ALL CARS:", cars);
   const [selectedImage, setSelectedImage] = useState('');
   const canEditVehicle = user?.role === ROLES.ADMIN || user?.role === ROLES.INVENTORY;
 
   useEffect(() => setSelectedImage(car ? getCarImages(car)[0] : ''), [car]);
 
-  if (!car) {
-    return (
-      <div className="car-details-admin-page">
-        <PageHeader
-          title="Vehicle Not Found"
-          subtitle="The requested vehicle record does not exist in the database"
-        />
-        <Button
-          variant="contained"
-          startIcon={<ArrowBack />}
-          onClick={() => navigate(-1)}
-          sx={{ borderRadius: 2 }}
-        >
-          Go Back
-        </Button>
-      </div>
-    );
-  }
+  if (carsLoading && !car) {
+  return (
+    <div className="car-details-admin-page">
+      <PageHeader
+        title="Loading Vehicle"
+        subtitle="Please wait while vehicle details are being loaded"
+      />
+    </div>
+  );
+}
+
+if (!car) {
+  return (
+    <div className="car-details-admin-page">
+      <PageHeader
+        title="Vehicle Not Found"
+        subtitle="The requested vehicle record does not exist in the database"
+      />
+
+      <Button
+        variant="contained"
+        onClick={() => navigate(-1)}
+      >
+        Go Back
+      </Button>
+    </div>
+  );
+}
 
   return (
     <div className="car-details-admin-page">
@@ -164,7 +178,7 @@ const CarDetailsAdmin = () => {
               <Grid item xs={12} sm={6}>
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="caption" color="textSecondary" display="block">Selling Rate</Typography>
-                  <Typography variant="body1" sx={{ fontWeight: 700, color: '#10B981' }}>{formatCurrency(car.sellingRate)}</Typography>
+                  <Typography variant="body1" sx={{ fontWeight: 700, color: '#10B981' }}>{formatCurrency(car.sellingPrice)}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -203,7 +217,7 @@ const CarDetailsAdmin = () => {
                   <LocalGasStation color="primary" fontSize="small" />
                   <Box>
                     <Typography variant="caption" color="textSecondary">Fuel Type</Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 600 }}>{car.fuelType || 'N/A'}</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>{car.fuel || 'N/A'}</Typography>
                   </Box>
                 </Box>
               </Grid>

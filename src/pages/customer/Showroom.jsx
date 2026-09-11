@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -46,7 +46,10 @@ const Showroom = () => {
   const dispatch = useDispatch();
   const allCars = useSelector(selectCars);
   const wishlist = useSelector(selectWishlist);
-  const cars = allCars.filter(car => car?.status === 'available' && (car?.stock ?? 0) > 0);
+  const cars = useMemo(
+  () => allCars.filter(car => car?.status === 'available' && (car?.stock ?? 0) > 0),
+  [allCars]
+);
   const favorites = wishlist;
   const [filteredCars, setFilteredCars] = useState([]);
   const [compareList, setCompareList] = useState([]);
@@ -164,6 +167,7 @@ const Showroom = () => {
   };
 
   const location = useLocation();
+  console.log('SHOWROOM PATH:', location.pathname);
 
   const handleViewDetails = (car) => {
     // Determine base route from current path (sales vs customer)

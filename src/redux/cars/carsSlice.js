@@ -9,6 +9,9 @@ const carsSlice = createSlice({
     error: null
   },
   reducers: {
+     setCarsLoading: (state, action) => {
+      state.loading = action.payload;
+    },
     setCars: (state, action) => { state.items = action.payload || []; },
     addCar: (state, action) => { state.items.push(action.payload); },
     updateCar: (state, action) => {
@@ -25,7 +28,8 @@ const carsSlice = createSlice({
   }
 });
 
-export const { setCars, addCar, updateCar, removeCar, toggleWishlist, setWishlist } = carsSlice.actions;
+export const { setCarsLoading, setCars, addCar, updateCar, removeCar, toggleWishlist, setWishlist } = carsSlice.actions;
 export const selectCars = state => state.cars.items;
 export const selectWishlist = state => state.cars.wishlist;
+export const selectCarsLoading = state => state.cars.loading;
 export default carsSlice.reducer;

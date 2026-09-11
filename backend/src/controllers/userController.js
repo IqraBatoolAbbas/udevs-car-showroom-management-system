@@ -17,13 +17,68 @@ const createUser = async (req, res) => {
   res.status(201).json({ success: true, message: 'User created', data: safeUser(user) });
 };
 const updateUser = async (req, res) => {
+  const requestedUserId = req.body.id;
+
+  if (
+    req.user.role === 'customer' &&
+    requestedUserId !== req.userId
+  ) {
+    return res.status(403).json({
+      success: false,
+      message: 'You can only update your own profile'
+    });
+  }
   const user = await User.findByPk(req.body.id);
-  if (!user) return res.status(404).json({ success: false, message: 'User not found' });
-  const updates = { ...req.body };
-  delete updates.id;
-  if (updates.password) updates.password = await bcrypt.hash(updates.password, 12);
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: 'User not found'
+    });
+  }
+
+  const {
+    name,
+    email,
+    password,
+    role,
+    status,
+    phone,
+    cnic,
+    address,
+    city,
+    joiningDate
+  } = req.body;
+
+  const updates = {
+    name,
+    email: email?.trim().toLowerCase(),
+    role,
+    status,
+    phone: phone?.trim() || null,
+    cnic: cnic?.trim() || null,
+    address: address?.trim() || null,
+    city: city?.trim() || null,
+    joiningDate: joiningDate || null
+  };
+
+  Object.keys(updates).forEach((key) => {
+    if (updates[key] === undefined) {
+      delete updates[key];
+    }
+  });
+
+  if (password) {
+    updates.password = await bcrypt.hash(password, 12);
+  }
+
   await user.update(updates);
-  res.json({ success: true, message: 'User updated', data: safeUser(user) });
+
+  res.json({
+    success: true,
+    message: 'User updated',
+    data: safeUser(user)
+  });
 };
 const deleteUser = async (req, res) => {
   if (req.params.id === req.userId) return res.status(400).json({ success: false, message: 'You cannot delete your own account' });

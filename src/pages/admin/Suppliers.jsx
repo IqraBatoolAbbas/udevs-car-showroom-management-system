@@ -29,7 +29,8 @@ import {
   LocationOn,
   Download,
   DirectionsCar,
-  Search
+  Search,
+  Visibility
 } from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
 import StatusChip from '../../components/common/StatusChip';
@@ -40,6 +41,7 @@ import { selectAuthUser } from '../../redux/auth/authSlice';
 import { selectSuppliers, removeSupplier } from '../../redux/suppliers/suppliersSlice';
 import { selectCars } from '../../redux/cars/carsSlice';
 import * as appService from '../../services/appService';
+import { suppliersApi } from '../../services/showroomApi';
 import { ROLES } from '../../utils/constants';
 
 const Suppliers = () => {
@@ -73,6 +75,12 @@ const Suppliers = () => {
     const basePath = user?.role === ROLES.INVENTORY ? '/inventory' : '/admin';
     navigate(`${basePath}/suppliers/edit/${supplier.id}`);
   };
+  const handleViewSupplier = (supplier) => {
+  const basePath =
+    user?.role === ROLES.INVENTORY ? '/inventory' : '/admin';
+
+  navigate(`${basePath}/suppliers/view/${supplier.id}`);
+};
 
   const handleDeleteClick = (supplier) => {
     setErrorMessage('');
@@ -84,18 +92,33 @@ const Suppliers = () => {
     setDeleteDialog({ open: true, supplier });
   };
 
-  const handleDeleteConfirm = () => {
-    if (deleteDialog.supplier) {
-      dispatch(removeSupplier(deleteDialog.supplier.id));
-      appService.logActivity({
-        type: 'delete',
-        entity: 'supplier',
-        entityId: deleteDialog.supplier.id,
-        description: `Deleted supplier record: ${deleteDialog.supplier.companyName} (${deleteDialog.supplier.id})`
-      });
-      setDeleteDialog({ open: false, supplier: null });
-    }
-  };
+  const handleDeleteConfirm = async () => {
+  if (!deleteDialog.supplier) return;
+
+  try {
+    await suppliersApi.remove(deleteDialog.supplier.id);
+
+    dispatch(removeSupplier(deleteDialog.supplier.id));
+
+    appService.logActivity({
+      type: 'delete',
+      entity: 'supplier',
+      entityId: deleteDialog.supplier.id,
+      description: `Deleted supplier record: ${deleteDialog.supplier.companyName} (${deleteDialog.supplier.id})`
+    });
+
+    setDeleteDialog({ open: false, supplier: null });
+  } catch (error) {
+    console.error('Error deleting supplier:', error);
+
+    setErrorMessage(
+      error.response?.data?.message ||
+      'Unable to delete supplier from the database.'
+    );
+
+    setDeleteDialog({ open: false, supplier: null });
+  }
+};
 
   const handleDeleteCancel = () => {
     setDeleteDialog({ open: false, supplier: null });
@@ -262,6 +285,20 @@ const Suppliers = () => {
                       <StatusChip status={supplier.status || 'active'} />
                     </TableCell>
                     <TableCell sx={{ py: 2, px: 2.5, textAlign: 'center' }}>
+                      <Tooltip title="View Supplier Profile">
+  <IconButton
+    size="small"
+    onClick={() => handleViewSupplier(supplier)}
+    color="info"
+    sx={{
+      '&:hover': {
+        bgcolor: 'rgba(2, 136, 209, 0.12)'
+      }
+    }}
+  >
+    <Visibility fontSize="small" />
+  </IconButton>
+</Tooltip>
                       <Tooltip title="Edit Supplier">
                         <IconButton
                           size="small"

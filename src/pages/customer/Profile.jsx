@@ -24,6 +24,7 @@ import { updateUser } from '../../redux/users/userActions';
 import { selectApplications } from '../../redux/applications/applicationsSlice';
 import { selectCustomers, addCustomer, updateCustomer } from '../../redux/customers/customersSlice';
 import { PAKISTAN_CITIES } from '../../utils/constants';
+
 import './Profile.css';
 
 const Profile = () => {
@@ -63,9 +64,9 @@ const Profile = () => {
       setProfileData({
         name: userData.name || '',
         email: userData.email || '',
-        phone: userData.phone || '+92-300-1234567',
-        cnic: userData.cnic || '12345-6789012-3',
-        address: userData.address || '123 Main Street, Gulberg III',
+        phone: userData.phone || '',
+        cnic: userData.cnic || '',
+        address: userData.address || '',
         city: userData.city || 'Lahore'
       });
 

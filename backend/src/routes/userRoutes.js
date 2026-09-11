@@ -11,6 +11,6 @@ router.get('/:id', asyncHandler(controller.getUser));
 router.post('/', authorize('admin'), [
   body('name').trim().notEmpty(), body('email').isEmail(), body('password').isLength({ min: 8 }), validate
 ], asyncHandler(controller.createUser));
-router.put('/', authorize('admin'), asyncHandler(controller.updateUser));
+router.put('/', authorize('admin', 'customer'), asyncHandler(controller.updateUser));
 router.delete('/:id', authorize('admin'), asyncHandler(controller.deleteUser));
 module.exports = router;

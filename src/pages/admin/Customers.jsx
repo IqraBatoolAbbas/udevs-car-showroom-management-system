@@ -25,11 +25,28 @@ import {
   IconButton,
   Tooltip
 } from '@mui/material';
-import { PersonAdd, Email, Phone, LocationOn, Close, Download, Search, Assignment, Person } from '@mui/icons-material';
+import {
+  PersonAdd,
+  Email,
+  Phone,
+  LocationOn,
+  Close,
+  Download,
+  Search,
+  Assignment,
+  Person,
+  Edit,
+  Delete
+} from '@mui/icons-material';
 import PageHeader from '../../components/common/PageHeader';
 import * as appService from '../../services/appService';
-import { selectCustomers } from '../../redux/customers/customersSlice';
-import { createRecord } from '../../redux/showroom/showroomSlice';
+import { customersApi } from '../../services/showroomApi';
+import {
+  selectCustomers,
+  addCustomer,
+  updateCustomer,
+  removeCustomer
+} from '../../redux/customers/customersSlice';
 import { selectApplications } from '../../redux/applications/applicationsSlice';
 import { validateCustomerForm } from '../../utils/validators';
 import { PAKISTAN_CITIES } from '../../utils/constants';
@@ -43,6 +60,10 @@ const Customers = () => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState(null);
+const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+const [customerToDelete, setCustomerToDelete] = useState(null);
+const [actionLoading, setActionLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -72,39 +93,124 @@ const Customers = () => {
     setSelectedCustomer(customer);
     setDetailsOpen(true);
   };
+  const handleEditCustomer = (customer) => {
+  if (!customer) return;
+
+  setEditingCustomer(customer);
+
+  setFormData({
+    name: customer.name || '',
+    email: customer.email || '',
+    phone: customer.phone || '',
+    cnic: customer.cnic || '',
+    address: customer.address || '',
+    city: customer.city || 'Lahore',
+    status: customer.status || 'active'
+  });
+
+  setErrors({});
+  setAddDialogOpen(true);
+};
+const handleDeleteCustomer = (customer) => {
+  if (!customer) return;
+
+  setCustomerToDelete(customer);
+  setDeleteDialogOpen(true);
+};
+
+const confirmDeleteCustomer = async () => {
+  if (!customerToDelete) return;
+
+  setActionLoading(true);
+
+  try {
+    await customersApi.remove(customerToDelete.id);
+
+    dispatch(removeCustomer(customerToDelete.id));
+
+    appService.logActivity({
+      type: 'delete',
+      entity: 'customer',
+      entityId: customerToDelete.id,
+      description: `Deleted customer record: ${customerToDelete.name} (${customerToDelete.id})`
+    });
+
+    setDeleteDialogOpen(false);
+    setCustomerToDelete(null);
+  } catch (error) {
+    console.error('Error deleting customer:', error);
+
+    setErrors({
+      submit:
+        error.response?.data?.message ||
+        'Unable to delete customer from the database.'
+    });
+  } finally {
+    setActionLoading(false);
+  }
+};
 
   const handleCloseDetails = () => {
     setDetailsOpen(false);
     setSelectedCustomer(null);
   };
+const handleAddSubmit = async (e) => {
+  e.preventDefault();
+  setErrors({});
 
-  const handleAddSubmit = (e) => {
-    e.preventDefault();
-    setErrors({});
+  const validationErrors = validateCustomerForm(formData);
 
-    const validationErrors = validateCustomerForm(formData);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+  if (Object.keys(validationErrors).length > 0) {
+    setErrors(validationErrors);
+    return;
+  }
 
-    const newCustomer = {
-      id: appService.generateId('CUST'),
+  setActionLoading(true);
+
+  try {
+    const customerData = {
       ...formData,
-      createdAt: new Date().toISOString()
+      email: formData.email.trim().toLowerCase(),
+      phone: formData.phone.trim(),
+      cnic: formData.cnic.trim(),
+      address: formData.address.trim()
     };
 
-    dispatch(createRecord({ resource: 'customers', payload: newCustomer }))
-      .unwrap()
-      .catch(error => setErrors({ submit: error.message || 'Unable to create customer' }));
-    appService.logActivity({
-      type: 'create',
-      entity: 'customer',
-      entityId: newCustomer.id,
-      description: `Registered new customer: ${newCustomer.name} (${newCustomer.id})`
-    });
+    if (editingCustomer) {
+      const updatedCustomer = await customersApi.update(
+        editingCustomer.id,
+        customerData
+      );
+
+      dispatch(updateCustomer(updatedCustomer));
+
+      appService.logActivity({
+        type: 'update',
+        entity: 'customer',
+        entityId: editingCustomer.id,
+        description: `Updated customer record: ${updatedCustomer.name} (${editingCustomer.id})`
+      });
+    } else {
+      const newCustomerData = {
+        id: appService.generateId('CUST'),
+        ...customerData
+      };
+
+      const createdCustomer = await customersApi.create(newCustomerData);
+
+      dispatch(addCustomer(createdCustomer));
+
+      appService.logActivity({
+        type: 'create',
+        entity: 'customer',
+        entityId: createdCustomer.id,
+        description: `Registered new customer: ${createdCustomer.name} (${createdCustomer.id})`
+      });
+    }
 
     setAddDialogOpen(false);
+    setEditingCustomer(null);
+
     setFormData({
       name: '',
       email: '',
@@ -114,7 +220,20 @@ const Customers = () => {
       city: 'Lahore',
       status: 'active'
     });
-  };
+  } catch (error) {
+    console.error('Error saving customer:', error);
+
+    setErrors({
+      submit:
+        error.response?.data?.message ||
+        'Unable to save customer in the database.'
+    });
+  } finally {
+    setActionLoading(false);
+  }
+};
+
+
 
   const handleExportCSV = () => {
     const headers = ['Customer ID', 'Full Name', 'Email', 'Phone', 'CNIC', 'City', 'Address', 'Status', 'Registered Date'];
@@ -335,20 +454,52 @@ const Customers = () => {
                       />
                     </TableCell>
                     <TableCell sx={{ py: 2, px: 2.5, textAlign: 'center' }}>
-                      <Button 
-                        size="small" 
-                        variant="contained"
-                        onClick={() => handleViewDetails(customer)}
-                        sx={{ 
-                          borderRadius: 2, 
-                          textTransform: 'none', 
-                          fontWeight: 700, 
-                          px: 2,
-                          background: 'linear-gradient(135deg, #1565C0 0%, #00ACC1 100%)' 
-                        }}
-                      >
-                        View Profile
-                      </Button>
+                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
+  <Tooltip title="View customer profile">
+    <IconButton
+      size="small"
+      onClick={() => handleViewDetails(customer)}
+      sx={{
+        color: '#1565C0',
+        '&:hover': {
+          bgcolor: 'rgba(21, 101, 192, 0.08)'
+        }
+      }}
+    >
+      <Person fontSize="small" />
+    </IconButton>
+  </Tooltip>
+
+  <Tooltip title="Edit customer">
+    <IconButton
+      size="small"
+      onClick={() => handleEditCustomer(customer)}
+      sx={{
+        color: '#10B981',
+        '&:hover': {
+          bgcolor: 'rgba(16, 185, 129, 0.08)'
+        }
+      }}
+    >
+      <Edit fontSize="small" />
+    </IconButton>
+  </Tooltip>
+
+  <Tooltip title="Delete customer">
+    <IconButton
+      size="small"
+      onClick={() => handleDeleteCustomer(customer)}
+      sx={{
+        color: '#DC2626',
+        '&:hover': {
+          bgcolor: 'rgba(220, 38, 38, 0.08)'
+        }
+      }}
+    >
+      <Delete fontSize="small" />
+    </IconButton>
+  </Tooltip>
+</Box>
                     </TableCell>
                   </TableRow>
                 );
@@ -484,10 +635,19 @@ const Customers = () => {
         fullWidth
         PaperProps={{ sx: { borderRadius: 3.5 } }}
       >
-        <DialogTitle sx={{ fontWeight: 700, py: 2.5, px: 3 }}>
-          Add New Customer Record
-        </DialogTitle>
+       <DialogTitle sx={{ fontWeight: 700, py: 2.5, px: 3 }}>
+  {editingCustomer ? 'Edit Customer Record' : 'Add New Customer Record'}
+</DialogTitle>
         <form onSubmit={handleAddSubmit}>
+          {errors.submit && (
+  <Typography
+    color="error"
+    variant="body2"
+    sx={{ mb: 2 }}
+  >
+    {errors.submit}
+  </Typography>
+)}
           <DialogContent sx={{ p: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
@@ -570,10 +730,73 @@ const Customers = () => {
           </DialogContent>
           <DialogActions sx={{ p: 2.5 }}>
             <Button onClick={() => setAddDialogOpen(false)}>Cancel</Button>
-            <Button type="submit" variant="contained" sx={{ px: 3 }}>Create Customer</Button>
+            <Button
+  type="submit"
+  variant="contained"
+  sx={{ px: 3 }}
+  disabled={actionLoading}
+>
+  {actionLoading
+    ? 'Saving...'
+    : editingCustomer
+      ? 'Update Customer'
+      : 'Create Customer'}
+</Button>
           </DialogActions>
         </form>
       </Dialog>
+
+      <Dialog
+  open={deleteDialogOpen}
+  onClose={() => {
+    if (!actionLoading) {
+      setDeleteDialogOpen(false);
+      setCustomerToDelete(null);
+    }
+  }}
+  maxWidth="xs"
+  fullWidth
+>
+  <DialogTitle sx={{ fontWeight: 700 }}>
+    Delete Customer
+  </DialogTitle>
+
+  <DialogContent>
+    <Typography>
+      Are you sure you want to delete{' '}
+      <strong>{customerToDelete?.name}</strong>?
+    </Typography>
+
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      sx={{ mt: 1 }}
+    >
+      This customer record will be permanently removed from the system.
+    </Typography>
+  </DialogContent>
+
+  <DialogActions sx={{ p: 2.5 }}>
+    <Button
+      onClick={() => {
+        setDeleteDialogOpen(false);
+        setCustomerToDelete(null);
+      }}
+      disabled={actionLoading}
+    >
+      Cancel
+    </Button>
+
+    <Button
+      onClick={confirmDeleteCustomer}
+      variant="contained"
+      color="error"
+      disabled={actionLoading}
+    >
+      {actionLoading ? 'Deleting...' : 'Delete Customer'}
+    </Button>
+  </DialogActions>
+</Dialog>
     </div>
   );
 };

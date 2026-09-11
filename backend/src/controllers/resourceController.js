@@ -1,5 +1,6 @@
 const { Op } = require('sequelize');
 
+
 const makeResourceController = (Model, searchableFields = []) => ({
   list: async (req, res) => {
     const { search, status, page = 1, limit = 50, ...filters } = req.query;

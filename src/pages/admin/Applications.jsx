@@ -31,6 +31,7 @@ import PageHeader from '../../components/common/PageHeader';
 import ApplicationStatus from '../../components/applications/ApplicationStatus';
 import EmptyState from '../../components/common/EmptyState';
 import * as appService from '../../services/appService';
+import { applicationsApi } from '../../services/showroomApi';
 import { selectApplications, updateApplication } from '../../redux/applications/applicationsSlice';
 import { selectCars } from '../../redux/cars/carsSlice';
 import { addNotification } from '../../redux/notifications/notificationsSlice';
@@ -66,44 +67,74 @@ const Applications = () => {
     setNotes('');
   };
 
-  const handleStatusConfirm = () => {
-    if (statusDialog.application) {
-      const updatedApplication = {
-        ...statusDialog.application,
-        status: statusDialog.newStatus,
-        statusHistory: [
-          ...(statusDialog.application.statusHistory || []),
-          {
-            status: statusDialog.newStatus,
-            timestamp: new Date().toISOString(),
-            notes: notes || `Status changed to ${statusDialog.newStatus}`
-          }
-        ],
-        updatedAt: new Date().toISOString()
-      };
-      dispatch(updateApplication(updatedApplication));
-      
-      // Log activity
-      appService.logActivity({
-        type: 'status_change',
-        entity: 'application',
-        entityId: statusDialog.application.id,
-        description: `Updated application ${statusDialog.application.id} status to ${statusDialog.newStatus.toUpperCase()}`
-      });
+  const handleStatusConfirm = async () => {
+  if (!statusDialog.application) return;
 
-      // Add Notification
-      dispatch(addNotification({
+  const application = statusDialog.application;
+
+  const updatedApplication = {
+    ...application,
+    status: statusDialog.newStatus,
+    statusHistory: [
+      ...(application.statusHistory || []),
+      {
+        status: statusDialog.newStatus,
+        timestamp: new Date().toISOString(),
+        notes: notes || `Status changed to ${statusDialog.newStatus}`
+      }
+    ]
+  };
+
+  try {
+    const savedApplication = await applicationsApi.update(
+      application.id,
+      updatedApplication
+    );
+
+    dispatch(updateApplication(savedApplication));
+
+    // Log activity
+    appService.logActivity({
+      type: 'status_change',
+      entity: 'application',
+      entityId: application.id,
+      description: `Updated application ${application.id} status to ${statusDialog.newStatus.toUpperCase()}`
+    });
+
+    // Add notification
+    dispatch(
+      addNotification({
         id: appService.generateId('NOTIF'),
         title: `Order Status Updated: ${statusDialog.newStatus.toUpperCase()}`,
-        message: `Application ${statusDialog.application.id} for ${statusDialog.application.fullName} is now ${statusDialog.newStatus}.`,
-        type: statusDialog.newStatus === 'completed' || statusDialog.newStatus === 'approved' ? 'success' : statusDialog.newStatus === 'rejected' ? 'error' : 'info',
+        message: `Application ${application.id} for ${application.fullName} is now ${statusDialog.newStatus}.`,
+        type:
+          statusDialog.newStatus === 'completed' ||
+          statusDialog.newStatus === 'approved'
+            ? 'success'
+            : statusDialog.newStatus === 'rejected'
+              ? 'error'
+              : 'info',
         targetRole: ['customer'],
-        targetUserId: statusDialog.application.customerUserId || null
-      }));
-      setStatusDialog({ open: false, application: null, newStatus: '' });
-      setNotes('');
-    }
-  };
+        targetUserId: application.customerUserId || null
+      })
+    );
+
+    setStatusDialog({
+      open: false,
+      application: null,
+      newStatus: ''
+    });
+
+    setNotes('');
+  } catch (error) {
+    console.error('Error updating application status:', error);
+
+    alert(
+      error.response?.data?.message ||
+      'Unable to update application status in the database.'
+    );
+  }
+};
 
   const handleExportCSV = () => {
     const headers = ['Application ID', 'Customer Name', 'Email', 'Phone', 'CNIC', 'City', 'Car Selected', 'Color', 'Status', 'Date Applied'];

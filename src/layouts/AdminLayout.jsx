@@ -70,6 +70,7 @@ const AdminLayout = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  console.log('ADMIN LAYOUT PATH:', location.pathname);
   const dispatch = useDispatch();
   const user = useSelector(selectAuthUser);
   const mode = useSelector(selectThemeMode);
